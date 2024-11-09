@@ -1,12 +1,13 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using eDereva.Core.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace eDereva.Infrastructure.Services
 {
-    public class TokenService(IConfiguration configuration)
+    public class TokenService(IConfiguration configuration) : ITokenService
     {
         private readonly string _secretKey = configuration["Jwt:SecretKey"] ?? throw new ArgumentNullException(nameof(configuration), "SecretKey cannot be null");
         private readonly string _issuer = configuration["Jwt:Issuer"] ?? throw new ArgumentNullException(nameof(configuration), "Issuer cannot be null");
@@ -42,7 +43,7 @@ namespace eDereva.Infrastructure.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public static bool IsTokenCloseToExpiring(JwtSecurityToken token)
+        public bool IsTokenCloseToExpiring(JwtSecurityToken token)
         {
             ArgumentNullException.ThrowIfNull(token);
 

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddHttpClient();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -63,6 +66,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddScoped<INIDAService, NIDAService>();
 
 builder.Services.AddFastEndpoints();
 
@@ -94,6 +99,16 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "eDereva API";
+        options.Theme = ScalarTheme.Saturn;
+        options.WithPreferredScheme("Bearer");
+        options.WithApiKeyAuthentication(keyOptions =>
+        {
+            keyOptions.Token = "Token";
+        });
+    });
 }
 
 app.UseHttpsRedirection();
