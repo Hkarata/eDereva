@@ -11,8 +11,4 @@
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.35.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Contracts\Requests\" />
-    </ItemGroup>
-
 </Project>

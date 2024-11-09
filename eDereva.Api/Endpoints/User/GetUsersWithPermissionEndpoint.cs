@@ -16,32 +16,36 @@ namespace eDereva.Api.Endpoints.User
             Description(options =>
             {
                 options.WithTags("User")
-                        .WithSummary("Get users with a specific permission")
-                        .WithDescription("Get all users with a specific permission");
+                       .WithSummary("Get users with a specific permission")
+                       .WithDescription("Get all users with a specific permission");
             });
             Throttle(
                 hitLimit: 15,
                 durationSeconds: 60,
-                headerName: "X-Client-Id" // this is optional
+                headerName: "X-Client-Id"
             );
         }
 
-        public override Task<Results<Ok<List<UserData>>, BadRequest>> ExecuteAsync(CancellationToken ct)
+        public override async Task<Results<Ok<List<UserData>>, BadRequest>> ExecuteAsync(CancellationToken ct)
         {
             var permissionId = Route<int>("permissionId");
+            var users = await userRepository.GetUsersWithPermissionsAsync(permissionId);
 
-            var users = userRepository.GetUsersWithPermissionsAsync(permissionId);
+            if (users == null || !users.Any())
+            {
+                throw new ProblemException("No users found", "No users were found with the specified permission");
+            }
 
-            return users == null
-                ? throw new ProblemException("No users found", "No users were found")
-                : (Results<Ok<List<UserData>>, BadRequest>)TypedResults.Ok(users.Select(user => new UserData
-                {
-                    Id = user.Id,
-                    NIN = user.NIN,
-                    FirstName = user.FirstName,
-                    MiddleName = user.MiddleName,
-                    LastName = user.LastName,
-                }).ToList());
+            var userData = users.Select(user => new UserData
+            {
+                Id = user.Id,
+                NIN = user.NIN,
+                FirstName = user.FirstName,
+                MiddleName = user.MiddleName,
+                LastName = user.LastName,
+            }).ToList();
+
+            return TypedResults.Ok(userData);
         }
     }
 }

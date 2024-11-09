@@ -67,10 +67,10 @@ namespace eDereva.Infrastructure.Repositories
             return user;
         }
 
-        public async Task DeleteAsync(User user)
+        public async Task DeleteAsync(Guid userId)
         {
-            logger.LogInformation("Deleting user: {User}", user);
-            context.Users.Remove(user);
+            var user = await GetByIdAsync(userId);
+            user.IsDeleted = true;
             await context.SaveChangesAsync();
         }
 

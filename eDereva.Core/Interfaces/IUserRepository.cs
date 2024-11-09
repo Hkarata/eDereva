@@ -8,7 +8,7 @@ namespace eDereva.Core.Interfaces
         Task<List<User>> GetAllAsync(ISpecification<User>? specification = null!);
         Task<User> AddAsync(User user);
         Task<User> UpdateAsync(User user);
-        Task DeleteAsync(User user);
+        Task DeleteAsync(Guid userId);
 
         // Example of finding users by their roles or permissions
         Task<List<User>> GetUsersByRoleAsync(Guid roleId, ISpecification<User>? specification = null!);
