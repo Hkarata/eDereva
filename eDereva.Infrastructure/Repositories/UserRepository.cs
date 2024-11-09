@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using eDereva.Core.Entities;
+﻿using eDereva.Core.Entities;
 using eDereva.Core.Interfaces;
 using eDereva.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

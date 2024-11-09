@@ -20,8 +20,8 @@ namespace eDereva.Api.Exceptions
             {
                 return true;
             }
-            
-            var problemDetails =  new ProblemDetails
+
+            var problemDetails = new ProblemDetails
             {
                 Title = problemException.Error,
                 Status = StatusCodes.Status400BadRequest,

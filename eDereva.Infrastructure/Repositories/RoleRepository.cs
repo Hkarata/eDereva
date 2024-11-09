@@ -39,7 +39,7 @@ namespace eDereva.Infrastructure.Repositories
         public async Task<List<Role>> GetAllAsync()
         {
             var cacheKey = "Roles";
-            
+
             logger.LogInformation("Fetching all roles from cache or database.");
 
             var roles = await hybrdiCache.GetOrCreateAsync<List<Role>>(cacheKey, async (entry) =>
