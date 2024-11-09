@@ -11,7 +11,7 @@ namespace eDereva.Api.Endpoints.User
     {
         public override void Configure()
         {
-            Get("/api/users/{userId}");
+            Get("/users/{userId}");
             Version(1);
             AllowAnonymous();
             Description(options =>

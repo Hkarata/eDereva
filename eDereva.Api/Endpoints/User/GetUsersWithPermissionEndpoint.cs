@@ -6,28 +6,32 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eDereva.Api.Endpoints.User
 {
-    public class GetUsersEndpoint(IUserRepository userRepository) : EndpointWithoutRequest<Results<Ok<List<UserData>>, BadRequest>>
+    public class GetUsersWithPermissionEndpoint(IUserRepository userRepository) : EndpointWithoutRequest<Results<Ok<List<UserData>>, BadRequest>>
     {
         public override void Configure()
         {
-            Get("/users");
+            Get("/users/permissions/{permissionId}");
             Version(1);
             AllowAnonymous();
             Description(options =>
             {
                 options.WithTags("User")
-                        .WithSummary("Get all users")
-                        .WithDescription("Retrieve all users");
+                        .WithSummary("Get users with a specific permission")
+                        .WithDescription("Get all users with a specific permission");
             });
             Throttle(
-                hitLimit: 20,
+                hitLimit: 15,
                 durationSeconds: 60,
                 headerName: "X-Client-Id" // this is optional
             );
         }
-        public override async Task<Results<Ok<List<UserData>>, BadRequest>> ExecuteAsync(CancellationToken ct)
+
+        public override Task<Results<Ok<List<UserData>>, BadRequest>> ExecuteAsync(CancellationToken ct)
         {
-            var users = await userRepository.GetAllAsync();
+            var permissionId = Route<int>("permissionId");
+
+            var users = userRepository.GetUsersWithPermissionsAsync(permissionId);
+
             return users == null
                 ? throw new ProblemException("No users found", "No users were found")
                 : (Results<Ok<List<UserData>>, BadRequest>)TypedResults.Ok(users.Select(user => new UserData
@@ -37,10 +41,6 @@ namespace eDereva.Api.Endpoints.User
                     FirstName = user.FirstName,
                     MiddleName = user.MiddleName,
                     LastName = user.LastName,
-                    Sex = user.Sex.ToString(),
-                    Age = DateTime.Now.Year - user.DateOfBirth.Year,
-                    PhoneNumber = user.PhoneNumber,
-                    Email = user.Email!
                 }).ToList());
         }
     }

@@ -10,7 +10,7 @@ namespace eDereva.Api.Endpoints.User
     {
         public override void Configure()
         {
-            Get("/api/users/role/{roleId}");
+            Get("/users/role/{roleId}");
             Version(1);
             AllowAnonymous();
             Description(options =>
