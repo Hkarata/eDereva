@@ -9,6 +9,7 @@ namespace eDereva.Core.Interfaces
         Task<Role> AddAsync(Role role);
         Task<Role> UpdateAsync(Role role);
         Task DeleteAsync(Role role);
-        Task<List<Role>> GetRolesWithPermissionsAsync(IEnumerable<Guid> roleIds);
+        Task<List<Role>> GetRolesWithPermissionsAsync(List<Guid> roleIds);
+        Task<List<Guid>> GetRoleIdsAsync();
     }
 }

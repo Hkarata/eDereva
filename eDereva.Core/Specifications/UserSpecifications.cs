@@ -5,65 +5,47 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eDereva.Core.Specifications
 {
-    public class UsersSpecification : ISpecification<User>
+    public class UsersSpecification(IRoleRepository roleRepository) : ISpecification<User>
     {
-        private readonly IRoleRepository _roleRepository;
-
-        public Expression<Func<User, bool>>? Criteria { get; private set; }
-
-        // Using expression-bodied members for cleaner syntax
+        public Expression<Func<User, bool>> Criteria { get; private set; } = default!;
         public Expression<Func<User, object>> OrderBy => user => user.FirstName;
         public Expression<Func<User, object>> OrderByDescending => null!;
 
-        // Pagination properties
         public int? Take { get; private set; }
         public int? Skip { get; private set; }
 
-        // Include related data
         public Func<IQueryable<User>, IQueryable<User>> Include => query =>
             query.Include(u => u.Roles)!
                  .ThenInclude(r => r.Permissions);
 
-        public bool IgnoreSoftDeletes { get; }
+        public bool IgnoreSoftDeletes { get; private set; }
 
-        public UsersSpecification(
-            IEnumerable<Guid> userRoleIds,
-            bool includeDeleted,
-            IRoleRepository roleRepository, bool ignoreSoftDeletes, int pageSize = 10,
-            int pageNumber = 1)
+        public async Task InitializeAsync(bool includeDeleted, int pageSize = 10, int pageNumber = 1)
         {
-            _roleRepository = roleRepository;
-            IgnoreSoftDeletes = ignoreSoftDeletes;
-
-            // Initialize pagination
+            // Set pagination values
             Take = pageSize;
             Skip = (pageNumber - 1) * pageSize;
 
-            // Optimize role permission check by loading all relevant roles at once
-            InitializeCriteriaAsync(userRoleIds, includeDeleted).Wait();
-        }
+            // Get role IDs for permissions check
+            var roleIds = await roleRepository.GetRoleIdsAsync();
 
-        private async Task InitializeCriteriaAsync(IEnumerable<Guid> userRoleIds, bool includeDeleted)
-        {
-            // Cache userRoleIds to avoid multiple enumerations
-            var roleIds = userRoleIds.ToList();
+            // Load roles and permissions in a batch to avoid multiple calls
+            var rolesWithPermissions = await roleRepository.GetRolesWithPermissionsAsync(roleIds);
 
-            // Batch load all relevant roles with their permissions
-            var rolesWithPermissions = await _roleRepository.GetRolesWithPermissionsAsync(roleIds);
-
+            // Check if any role has permission for viewing soft-deleted users
             var canViewSoftDeleted = rolesWithPermissions.Any(role =>
                 role.Permissions?.Any(p => p.CanViewSoftDeletedUsers) ?? false);
 
-            // Set criteria based on permissions
+            // Set the criteria for filtering users
             Criteria = BuildCriteria(canViewSoftDeleted || includeDeleted);
         }
 
         private static Expression<Func<User, bool>> BuildCriteria(bool includeDeleted)
         {
+            // If soft deletes should be included, allow all; otherwise, exclude soft-deleted users
             return includeDeleted
                 ? user => true
                 : user => !user.IsDeleted;
         }
     }
-
 }
