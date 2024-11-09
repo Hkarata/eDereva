@@ -18,6 +18,11 @@ namespace eDereva.Api.Endpoints.Identity
                     .WithSummary("Confirm OTP")
                     .WithDescription("Confirm OTP for a phone number");
             });
+            Throttle(
+                hitLimit: 5,
+                durationSeconds: 60,
+                headerName: "X-Client-Id" // this is optional
+            );
         }
 
         public override async Task<Results<Ok, BadRequest>> ExecuteAsync(CancellationToken ct)

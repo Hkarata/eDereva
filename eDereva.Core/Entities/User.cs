@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Enums;
 using eDereva.Core.Interfaces;
 
@@ -51,5 +52,40 @@ namespace eDereva.Core.Entities
 
         // Navigation properties
         public ICollection<Role>? Roles { get; set; }
+    }
+
+    public static class UserExtensions
+    {
+        public static string GetFullName(this User user)
+        {
+            return $"{user.FirstName} {user.MiddleName} {user.LastName}";
+        }
+
+        public static int GetAge(this User user)
+        {
+            var today = DateTime.Today;
+            var age = today.Year - user.DateOfBirth.Year;
+            if (user.DateOfBirth.Date > today.AddYears(-age))
+            {
+                age--;
+            }
+            return age;
+        }
+
+        public static UserData MaptoUserData(this User user)
+        {
+            return new UserData
+            {
+                Id = user.Id,
+                NIN = user.NIN,
+                FirstName = user.FirstName,
+                MiddleName = user.MiddleName,
+                LastName = user.LastName,
+                Age = user.GetAge(),
+                Sex = user.Sex.ToString(),// Convert enum to string
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email!
+            };
+        }
     }
 }

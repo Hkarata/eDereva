@@ -10,6 +10,7 @@ namespace eDereva.Api.Endpoints.Identity
         public override void Configure()
         {
             Get("identity/request-otp/{phone-number}");
+            Version(1);
             AllowAnonymous();
             Description(options =>
             {
@@ -17,6 +18,11 @@ namespace eDereva.Api.Endpoints.Identity
                     .WithSummary("Request OTP")
                     .WithDescription("Request an OTP for a phone number");
             });
+            Throttle(
+                hitLimit: 5,
+                durationSeconds: 60,
+                headerName: "X-Client-Id" // this is optional
+            );
         }
 
         public override async Task<Results<Ok, BadRequest>> ExecuteAsync(CancellationToken ct)

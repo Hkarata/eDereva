@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\eDereva.Core\eDereva.Core.csproj" />
-      <ProjectReference Include="..\eDereva.UseCases\eDereva.UseCases.csproj" />
     </ItemGroup>
 
 </Project>

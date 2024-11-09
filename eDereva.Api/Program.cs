@@ -73,7 +73,8 @@ builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<INIDAService, NIDAService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 
-builder.Services.AddFastEndpoints();
+builder.Services.AddFastEndpoints()
+    .AddResponseCaching();
 
 builder.Services.AddProblemDetails(options =>
 {
@@ -124,11 +125,12 @@ app.UseMiddleware<JwtRefreshMiddleware>();
 app.UseMiddleware<ApiKeyAuthenticationMiddleware>();
 app.UseAuthorization();
 
-app.UseFastEndpoints(options =>
-{
-    options.Versioning.Prefix = "v";
-    options.Versioning.DefaultVersion = 1;
-    options.Versioning.PrependToRoute = true;
-});
+app.UseResponseCaching()
+    .UseFastEndpoints(options =>
+    {
+        options.Versioning.Prefix = "v";
+        options.Versioning.DefaultVersion = 1;
+        options.Versioning.PrependToRoute = true;
+    });
 
 app.Run();

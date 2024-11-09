@@ -19,6 +19,11 @@ namespace eDereva.Api.Endpoints.Identity
                     .WithSummary("Get User Identity")
                     .WithDescription("Get user identity information from NIDA");
             });
+            Throttle(
+                hitLimit: 5,
+                durationSeconds: 60,
+                headerName: "X-Client-Id" // this is optional
+            );
         }
 
         public override async Task<Results<Ok<UserDto>, BadRequest>> ExecuteAsync(CancellationToken ct)
