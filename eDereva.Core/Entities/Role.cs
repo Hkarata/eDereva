@@ -20,5 +20,6 @@ namespace eDereva.Core.Entities
 
         // Navigation properties
         public ICollection<User>? Users { get; set; }
+        public ICollection<Permission>? Permissions { get; set; }
     }
 }
