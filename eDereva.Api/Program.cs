@@ -3,6 +3,7 @@ using eDereva.Api.Exceptions;
 using eDereva.Api.Extensions;
 using eDereva.Core.Interfaces;
 using eDereva.Core.Services;
+using eDereva.Core.ValueObjects;
 using eDereva.Infrastructure.Data;
 using eDereva.Infrastructure.Repositories;
 using eDereva.Infrastructure.Services;
@@ -42,6 +43,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+
 builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -68,6 +71,7 @@ builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<INIDAService, NIDAService>();
+builder.Services.AddScoped<IOtpService, OtpService>();
 
 builder.Services.AddFastEndpoints();
 
@@ -117,6 +121,7 @@ app.UseExceptionHandler();
 
 app.UseAuthentication();
 app.UseMiddleware<JwtRefreshMiddleware>();
+app.UseMiddleware<ApiKeyAuthenticationMiddleware>();
 app.UseAuthorization();
 
 app.UseFastEndpoints(options =>
