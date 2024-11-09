@@ -1,11 +1,36 @@
-﻿using FastEndpoints;
+﻿using eDereva.Api.Exceptions;
+using eDereva.Core.Services;
+using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eDereva.Api.Endpoints.Identity
 {
-    //public class RequestOtpEndpoint : EndpointWithoutRequest<Results<Ok, BadRequest>>
-    //{
+    public class RequestOtpEndpoint(IOtpService otpService) : EndpointWithoutRequest<Results<Ok, BadRequest>>
+    {
+        public override void Configure()
+        {
+            Get("identity/request-otp/{phone-number}");
+            AllowAnonymous();
+            Description(options =>
+            {
+                options.WithTags("Identity")
+                    .WithSummary("Request OTP")
+                    .WithDescription("Request an OTP for a phone number");
+            });
+        }
 
+        public override async Task<Results<Ok, BadRequest>> ExecuteAsync(CancellationToken ct)
+        {
+            var phoneNumber = Route<string>("phone-number");
 
-    //}
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+                throw new ProblemException("Phone number is required", "please provide your phone number");
+
+            var otp = await otpService.GenerateOtpAsync(phoneNumber);
+
+            return otp is null
+                ? throw new ProblemException("Failed to generate OTP", "Failed to generate OTP")
+                : (Results<Ok, BadRequest>)TypedResults.Ok();
+        }
+    }
 }
