@@ -8,6 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\eDereva.Api\eDereva.Api.csproj" />
       <ProjectReference Include="..\eDereva.Core\eDereva.Core.csproj" />
       <ProjectReference Include="..\eDereva.UseCases\eDereva.UseCases.csproj" />
