@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace eDereva.Core.Specifications
+namespace eDereva.Core.Interfaces
 {
     public interface ISpecification<T>
     {
