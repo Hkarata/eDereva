@@ -11,7 +11,7 @@ public class District : ISoftDelete
     public string Name { get; set; } = string.Empty;
 
     // Foreign Key to Region
-    public int RegionId { get; set; }
+    public Guid RegionId { get; set; }
     public Region? Region { get; set; }
 
     // Navigation property to related Venues
