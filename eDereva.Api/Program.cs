@@ -44,6 +44,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+builder.Services.Configure<SmsConfiguration>(configuration.GetSection("SmsService"));
 
 builder.Services.AddHttpClient();
 
@@ -72,6 +73,7 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<INIDAService, NIDAService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
+builder.Services.AddScoped<ISmsService, SmsService>();
 
 builder.Services.AddFastEndpoints()
     .AddResponseCaching();

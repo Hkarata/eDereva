@@ -7,7 +7,7 @@ namespace eDereva.Core.Entities;
 public class Session : ISoftDelete
 {
     public Guid Id { get; set; }
-    
+
     public SessionStatus Status { get; set; } = SessionStatus.Active;
     [Required]
     public DateTime StartTime { get; set; }
@@ -22,7 +22,7 @@ public class Session : ISoftDelete
     public DateTime? ContingencyTime { get; set; } // Time the contingency occurred, if applicable
 
     // If the contingency is "Other", a VenueManager must specify a reason
-    [MaxLength(500)] 
+    [MaxLength(500)]
     private string? ContingencyExplanation { get; set; } // Explanation for "Other" contingencies
 
     // Foreign Key to Venue

@@ -1,11 +1,12 @@
 ﻿using eDereva.Api.Exceptions;
+using eDereva.Core.Contracts.Requests;
 using eDereva.Core.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eDereva.Api.Endpoints.Identity
 {
-    public class RequestOtpEndpoint(IOtpService otpService) : EndpointWithoutRequest<Results<Ok, BadRequest>>
+    public class RequestOtpEndpoint(IOtpService otpService, ISmsService smsService) : EndpointWithoutRequest<Results<Ok, BadRequest>>
     {
         public override void Configure()
         {
@@ -32,11 +33,28 @@ namespace eDereva.Api.Endpoints.Identity
             if (string.IsNullOrWhiteSpace(phoneNumber))
                 throw new ProblemException("Phone number is required", "please provide your phone number");
 
-            var otp = await otpService.GenerateOtpAsync(phoneNumber);
+            var Otp = await otpService.GenerateOtpAsync(phoneNumber);
 
-            return otp is null
-                ? throw new ProblemException("Failed to generate OTP", "Failed to generate OTP")
-                : (Results<Ok, BadRequest>)TypedResults.Ok();
+            if (Otp is null)
+                throw new ProblemException("Failed to generate OTP", "Failed to generate OTP.");
+
+            var phone = 255 + phoneNumber.TrimStart('0');
+
+            var sms = new Sms
+            {
+                source_addr = "RSAllies",
+                schedule_time = string.Empty,
+                encoding = "0",
+                message = $"Hello, your OTP is {Otp}. Use it before it expires.\nHabari, OTP yako ni {Otp}. Tumia kabla muda wake hujaisha.",
+                recipients =
+                [
+                    new() { recipient_id = "1", dest_addr = phone}
+                ]
+            };
+
+            await smsService.SendMessageAsync(sms);
+
+            return (Results<Ok, BadRequest>)TypedResults.Ok();
         }
     }
 }

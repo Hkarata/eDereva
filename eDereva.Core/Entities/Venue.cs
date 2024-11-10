@@ -6,10 +6,10 @@ namespace eDereva.Core.Entities;
 public class Venue : ISoftDelete
 {
     public int VenueId { get; set; }
-    
+
     [MaxLength(150)]
     public string Name { get; set; } = string.Empty;
-    
+
     public string Address { get; set; } = string.Empty;
 
     public List<string>? ImageUrls { get; set; }

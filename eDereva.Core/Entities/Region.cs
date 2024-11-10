@@ -7,7 +7,7 @@ namespace eDereva.Core.Entities;
 public class Region : ISoftDelete
 {
     public Guid RegionId { get; set; }
-    
+
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
 

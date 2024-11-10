@@ -26,5 +26,5 @@ public class Booking : ISoftDelete
     {
         return Session?.Contingency != ContingencyType.None;
     }
-    
+
 }
