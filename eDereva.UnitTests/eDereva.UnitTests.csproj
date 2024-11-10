@@ -11,4 +11,8 @@
       <ProjectReference Include="..\eDereva.Core\eDereva.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="TUnit" Version="0.2.202" />
+    </ItemGroup>
+
 </Project>

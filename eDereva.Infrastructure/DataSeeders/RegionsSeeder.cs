@@ -1,6 +1,6 @@
 namespace eDereva.Infrastructure.DataSeeders;
 
-public class RegionsSeeder
+public static class RegionsSeeder
 {
-    
+    public static readonly string RegionsFilePath = "Regions.json";
 }

@@ -1,3 +1,126 @@
-{
-
-}
+[
+  {
+    "Id": "f29f20c7-df14-40db-bd0e-04e8a4787d54",
+    "Name": "Katavi"
+  },
+  {
+    "Id": "f4806a1e-4f40-4440-af94-074fc5cbcb82",
+    "Name": "Simiyu"
+  },
+  {
+    "Id": "0d988341-4ff8-4aba-a4da-0dcb2800d851",
+    "Name": "Arusha"
+  },
+  {
+    "Id": "83288217-7d54-4b17-bff1-113c16a91e97",
+    "Name": "Rukwa"
+  },
+  {
+    "Id": "4520b5f1-9d0d-4c34-b1a6-18af2d967037",
+    "Name": "Unguja Kusini"
+  },
+  {
+    "Id": "cd799c13-b68f-424a-b48e-1ed299a19d37",
+    "Name": "Pemba Kaskazini"
+  },
+  {
+    "Id": "78807f60-451f-402e-a1c5-23cb01e49545",
+    "Name": "Mbeya"
+  },
+  {
+    "Id": "0f97c2f0-e7d8-4473-9fb8-2fbd50240f37",
+    "Name": "Ruvuma"
+  },
+  {
+    "Id": "a7ae6311-090a-4098-834f-3ce7164ec94f",
+    "Name": "Geita"
+  },
+  {
+    "Id": "8095096c-5b0a-4860-b955-51c77f1f6994",
+    "Name": "Unguja Mjini Magharibi"
+  },
+  {
+    "Id": "37929049-00e2-4053-8886-6048f0cd64fc",
+    "Name": "Kilimanjaro"
+  },
+  {
+    "Id": "559b51c0-ba30-463c-a358-71dbc4091ec0",
+    "Name": "Kagera"
+  },
+  {
+    "Id": "ded1f515-9cbe-4890-b596-7b5b9eb187db",
+    "Name": "Singida"
+  },
+  {
+    "Id": "55eea569-c398-4e16-ae18-8950634c3204",
+    "Name": "Mwanza"
+  },
+  {
+    "Id": "176af58a-e88a-4e3e-ba2e-9318f6b42f07",
+    "Name": "Iringa"
+  },
+  {
+    "Id": "6c20c859-8370-4e60-80ff-9572239eda1f",
+    "Name": "Lindi"
+  },
+  {
+    "Id": "54f4d719-b835-4252-9ede-98185253c5ca",
+    "Name": "Manyara"
+  },
+  {
+    "Id": "4c2fff75-b4d6-41a2-81b8-9eaca57a106f",
+    "Name": "Tabora"
+  },
+  {
+    "Id": "6e164e10-f534-42d4-9d38-a6e874bdec65",
+    "Name": "Dar es Salaam"
+  },
+  {
+    "Id": "d9ac3d1d-d56a-4428-8a57-a948541a159e",
+    "Name": "Mara"
+  },
+  {
+    "Id": "e3581091-5b26-4839-93eb-b41de340915b",
+    "Name": "Shinyanga"
+  },
+  {
+    "Id": "77a45b72-e21a-4979-be0f-b9afb01a418c",
+    "Name": "Dodoma"
+  },
+  {
+    "Id": "4d623c64-b05f-45c4-bd21-c4bf5fac49ed",
+    "Name": "Songwe"
+  },
+  {
+    "Id": "7f60c70e-b346-4e19-b6da-cc5ca922197c",
+    "Name": "Tanga"
+  },
+  {
+    "Id": "1793fe63-bccf-41bf-806c-d917fa140cf6",
+    "Name": "Morogoro"
+  },
+  {
+    "Id": "f9560135-599b-4721-b033-dda412499b81",
+    "Name": "Pwani"
+  },
+  {
+    "Id": "1d64eb68-1ba0-4df8-84fe-e188c4871a43",
+    "Name": "Kigoma"
+  },
+  {
+    "Id": "34be69ef-7df7-4a98-85f9-e426c8144a22",
+    "Name": "Njombe"
+  },
+  {
+    "Id": "6ceb76dd-e3f9-45c6-83a0-ead052c7cd0b",
+    "Name": "Mtwara"
+  },
+  {
+    "Id": "80d2afee-a15d-4dfb-91a6-fe2922aa28bc",
+    "Name": "Pemba Kusini"
+  },
+  {
+    "Id": "b80f8d15-f287-4b68-983e-ffdab85a047d",
+    "Name": "Unguja Kaskazini"
+  }
+]
