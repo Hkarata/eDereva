@@ -3,30 +3,23 @@ using Microsoft.Extensions.Options;
 
 namespace eDereva.Api.Extensions
 {
-    public class ApiKeyAuthenticationMiddleware
+    public class ApiKeyAuthenticationMiddleware(RequestDelegate next, IOptions<ApiSettings> apiSettings)
     {
-        private readonly RequestDelegate _next;
-        private readonly string _validApiKey;
-
-        public ApiKeyAuthenticationMiddleware(RequestDelegate next, IOptions<ApiSettings> apiSettings)
-        {
-            _next = next; // This will be automatically injected by the ASP.NET Core pipeline
-            _validApiKey = apiSettings.Value.ApiKey;
-        }
+        private readonly string _validApiKey = apiSettings.Value.ApiKey;
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
             // Skip API key validation for the exempted path (e.g., /scalar/v1)
             if (httpContext.Request.Path.StartsWithSegments("/scalar/v1"))
             {
-                await _next(httpContext); // Proceed to the next middleware if path is exempted
+                await next(httpContext); // Proceed to the next middleware if path is exempted
                 return;
             }
 
             // Exempt routes like /openapi/{documentName}.json
             if (httpContext.Request.Path.StartsWithSegments("/openapi"))
             {
-                await _next(httpContext);
+                await next(httpContext);
                 return;
             }
 
@@ -37,7 +30,7 @@ namespace eDereva.Api.Extensions
                 return;
             }
 
-            await _next(httpContext);
+            await next(httpContext);
         }
     }
 

@@ -15,7 +15,7 @@ namespace eDereva.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<PaginatedResult<Session>> GetSessionsByVenueIdAsync(int venueId, PaginationParams pagination)
+        public async Task<PaginatedResult<Session>> GetSessionsByVenueIdAsync(Guid venueId, PaginationParams pagination)
         {
             var query = _context.Sessions
                 .AsNoTracking()
@@ -34,7 +34,7 @@ namespace eDereva.Infrastructure.Repositories
             return new PaginatedResult<Session>(items, count, pagination);
         }
 
-        public async Task<bool> HasOverlappingSessionsAsync(int venueId, DateTime startTime, DateTime endTime, Guid? excludeSessionId = null)
+        public async Task<bool> HasOverlappingSessionsAsync(Guid venueId, DateTime startTime, DateTime endTime, Guid? excludeSessionId = null)
         {
             return await _context.Sessions
                 .AsNoTracking()

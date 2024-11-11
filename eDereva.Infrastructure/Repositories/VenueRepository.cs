@@ -22,7 +22,7 @@ namespace eDereva.Infrastructure.Repositories
                 .Where(v => !v.IsDeleted)
                 .Select(v => new Venue
                 {
-                    VenueId = v.VenueId,
+                    Id = v.Id,
                     Name = v.Name,
                     Capacity = v.Capacity
                 })

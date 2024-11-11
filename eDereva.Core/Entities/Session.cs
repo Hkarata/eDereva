@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Enums;
 using eDereva.Core.Interfaces;
 
@@ -26,7 +27,7 @@ public class Session : ISoftDelete
     public string? ContingencyExplanation { get; set; } // Explanation for "Other" contingencies
 
     // Foreign Key to Venue
-    public int VenueId { get; set; }
+    public Guid VenueId { get; set; }
     public Venue? Venue { get; set; }
 
     // Navigation property to related Bookings
@@ -43,5 +44,23 @@ public class Session : ISoftDelete
             throw new InvalidOperationException("A contingency explanation must be provided when the contingency type is 'Other'.");
         }
         return true;
+    }
+}
+
+public static class SessionExtensions
+{
+    public static SessionDto MapToSessionDto(this Session session)
+    {
+        return new SessionDto
+        {
+            Id = session.Id,
+            Status = session.Status,
+            StartTime = session.StartTime,
+            EndTime = session.EndTime,
+            InitiationTime = session.InitiationTime,
+            Contingency = session.Contingency,
+            ContingencyTime = session.ContingencyTime,
+            ContingencyExplanation = session.ContingencyExplanation
+        };
     }
 }
