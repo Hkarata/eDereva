@@ -1,4 +1,5 @@
-﻿using eDereva.Core.Entities;
+﻿using eDereva.Core.Contracts.Responses;
+using eDereva.Core.Entities;
 using eDereva.Core.Interfaces;
 using eDereva.Core.ValueObjects;
 using eDereva.Infrastructure.Data;
@@ -15,40 +16,70 @@ namespace eDereva.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Venue>> GetAllVenuesLightAsync()
+        public async Task<PaginatedResult<VenueDto>> GetAllVenuesAsync(PaginationParams pagination)
         {
-            return await _context.Venues
+            // Build the base query with pagination, excluding deleted venues
+            var query = _context.Venues
                 .AsNoTracking()
+                .AsSplitQuery()
                 .Where(v => !v.IsDeleted)
-                .Select(v => new Venue
+                .OrderBy(v => v.Name); // You can change the sorting criteria as needed
+
+            // Get the total count for pagination
+            var totalCount = await query.CountAsync();
+
+            // Apply pagination
+            var venues = await query
+                .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .Include(v => v.District) // Include District (SplitQuery will handle this)
+                .ThenInclude(d => d!.Region) // Include Region through District (SplitQuery will handle this)
+                .AsSplitQuery() // Use SplitQuery to optimize loading related entities
+                .Select(v => new VenueDto
                 {
                     Id = v.Id,
                     Name = v.Name,
-                    Capacity = v.Capacity
+                    Address = v.Address,
+                    Capacity = v.Capacity,
+                    District = v.District!.Name, // District Name
+                    Region = v.District!.Region!.Name, // Region Name, safely accessing with null conditional operator
+                    ImageUrls = v.ImageUrls
                 })
                 .ToListAsync();
+
+            // Return the paginated result
+            var paginatedResult = new PaginatedResult<VenueDto>(venues, totalCount, pagination);
+
+            return paginatedResult;
         }
 
-        public async Task<PaginatedResult<Venue>> GetVenuesByDistrictIdAsync(int districtId, PaginationParams pagination)
+
+
+        public async Task<PaginatedResult<VenueDto>> GetVenuesByDistrictIdAsync(Guid districtId, PaginationParams pagination)
         {
             var query = _context.Venues
                 .AsNoTracking()
+                .AsSplitQuery()
                 .Where(v => v.DistrictId == districtId && !v.IsDeleted);
 
             var count = await query.CountAsync();
             var items = await query
+                .AsSplitQuery()
                 .OrderBy(SortPropertyHelper<Venue>.GetSortProperty(pagination))
                 .Skip((pagination.PageNumber - 1) * pagination.PageSize)
                 .Take(pagination.PageSize)
                 .ToListAsync();
 
-            return new PaginatedResult<Venue>(items, count, pagination);
+            var venues = items.Select(v => v.MapToVenueDto()).ToList();
+
+            return new PaginatedResult<VenueDto>(venues, count, pagination);
         }
 
-        public async Task<PaginatedResult<Venue>> GetVenuesWithSessionsAsync(PaginationParams pagination)
+        public async Task<PaginatedResult<VenueDto>> GetVenuesWithSessionsAsync(PaginationParams pagination)
         {
             var query = _context.Venues
                 .AsNoTracking()
+                .AsSplitQuery()
                 .Where(v => !v.IsDeleted);
 
             var count = await query.CountAsync();
@@ -60,16 +91,19 @@ namespace eDereva.Infrastructure.Repositories
                 .Take(pagination.PageSize)
                 .ToListAsync();
 
-            return new PaginatedResult<Venue>(items, count, pagination);
+            var venues = items.Select(v => v.MapToVenueDto()).ToList();
+
+            return new PaginatedResult<VenueDto>(venues, count, pagination);
         }
 
-        public async Task<PaginatedResult<Venue>> GetAvailableVenuesAsync(
+        public async Task<PaginatedResult<VenueDto>> GetAvailableVenuesAsync(
             DateTime startTime,
             DateTime endTime,
             PaginationParams pagination)
         {
             var query = _context.Venues
                 .AsNoTracking()
+                .AsSplitQuery()
                 .Where(v => !v.IsDeleted &&
                            (!v.Sessions!.Any() || !v.Sessions!.Any(s =>
                                !s.IsDeleted &&
@@ -80,12 +114,15 @@ namespace eDereva.Infrastructure.Repositories
 
             var count = await query.CountAsync();
             var items = await query
+                .AsSplitQuery()
                 .OrderBy(SortPropertyHelper<Venue>.GetSortProperty(pagination))
                 .Skip((pagination.PageNumber - 1) * pagination.PageSize)
                 .Take(pagination.PageSize)
                 .ToListAsync();
 
-            return new PaginatedResult<Venue>(items, count, pagination);
+            var venues = items.Select(v => v.MapToVenueDto()).ToList();
+
+            return new PaginatedResult<VenueDto>(venues, count, pagination);
         }
     }
 }

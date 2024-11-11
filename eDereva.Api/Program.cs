@@ -77,6 +77,7 @@ builder.Services.AddScoped<INIDAService, NIDAService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IVenueManagerRepository, VenueManagerRepository>();
+builder.Services.AddScoped<IVenueRepository, VenueRepository>();
 
 builder.Services.AddFastEndpoints()
     .AddResponseCaching();

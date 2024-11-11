@@ -5,7 +5,7 @@ namespace eDereva.Core.Entities;
 
 public class District : ISoftDelete
 {
-    public int DistrictId { get; set; }
+    public Guid Id { get; set; }
 
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
