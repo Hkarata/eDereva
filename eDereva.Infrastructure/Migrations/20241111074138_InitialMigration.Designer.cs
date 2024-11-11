@@ -12,8 +12,8 @@ using eDereva.Infrastructure.Data;
 namespace eDereva.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241111073754_FixGuidMigration")]
-    partial class FixGuidMigration
+    [Migration("20241111074138_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

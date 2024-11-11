@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -151,8 +152,7 @@ namespace eDereva.Infrastructure.Migrations
                 name: "Venues",
                 columns: table => new
                 {
-                    VenueId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrls = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -163,7 +163,7 @@ namespace eDereva.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Venues", x => x.VenueId);
+                    table.PrimaryKey("PK_Venues", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Venues_Districts_DistrictId",
                         column: x => x.DistrictId,
@@ -185,10 +185,11 @@ namespace eDereva.Infrastructure.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ActualStartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    InitiationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Contingency = table.Column<int>(type: "int", nullable: false),
                     ContingencyTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    VenueId = table.Column<int>(type: "int", nullable: false),
+                    ContingencyExplanation = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    VenueId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -198,7 +199,7 @@ namespace eDereva.Infrastructure.Migrations
                         name: "FK_Sessions_Venues_VenueId",
                         column: x => x.VenueId,
                         principalTable: "Venues",
-                        principalColumn: "VenueId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
