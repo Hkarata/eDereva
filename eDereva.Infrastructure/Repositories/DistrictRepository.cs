@@ -22,7 +22,7 @@ namespace eDereva.Infrastructure.Repositories
                 .Where(d => !d.IsDeleted)
                 .Select(d => new District
                 {
-                    DistrictId = d.DistrictId,
+                    Id = d.Id,
                     Name = d.Name,
                 })
                 .ToListAsync();

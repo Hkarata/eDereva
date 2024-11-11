@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace eDereva.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -87,15 +88,14 @@ namespace eDereva.Infrastructure.Migrations
                 name: "Districts",
                 columns: table => new
                 {
-                    DistrictId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     RegionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Districts", x => x.DistrictId);
+                    table.PrimaryKey("PK_Districts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Districts_Regions_RegionId",
                         column: x => x.RegionId,
@@ -156,7 +156,7 @@ namespace eDereva.Infrastructure.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrls = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Capacity = table.Column<int>(type: "int", nullable: false),
-                    DistrictId = table.Column<int>(type: "int", nullable: false),
+                    DistrictId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     VenueManagerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
@@ -167,7 +167,7 @@ namespace eDereva.Infrastructure.Migrations
                         name: "FK_Venues_Districts_DistrictId",
                         column: x => x.DistrictId,
                         principalTable: "Districts",
-                        principalColumn: "DistrictId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Venues_VenueManagers_VenueManagerId",

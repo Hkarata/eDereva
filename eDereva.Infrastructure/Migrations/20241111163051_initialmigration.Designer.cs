@@ -12,8 +12,8 @@ using eDereva.Infrastructure.Data;
 namespace eDereva.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241111074138_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20241111163051_initialmigration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,11 +75,9 @@ namespace eDereva.Infrastructure.Migrations
 
             modelBuilder.Entity("eDereva.Core.Entities.District", b =>
                 {
-                    b.Property<int>("DistrictId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DistrictId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -92,7 +90,7 @@ namespace eDereva.Infrastructure.Migrations
                     b.Property<Guid>("RegionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("DistrictId");
+                    b.HasKey("Id");
 
                     b.HasIndex("RegionId");
 
@@ -295,8 +293,8 @@ namespace eDereva.Infrastructure.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
-                    b.Property<int>("DistrictId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DistrictId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ImageUrls")
                         .HasColumnType("nvarchar(max)");
