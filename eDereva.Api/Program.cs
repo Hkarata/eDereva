@@ -128,6 +128,11 @@ app.MapScalarApiReference(options =>
     {
         keyOptions.Token = "Token";
     });
+    options.AddServer(new ScalarServer
+    (
+        "http://4.221.77.82",
+        "Dev server"
+    ));
 });
 
 app.UseCors(builder =>
