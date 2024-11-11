@@ -15,7 +15,7 @@ public class Session : ISoftDelete
     [Required]
     public DateTime EndTime { get; set; }
 
-    public DateTime? ActualStartTime { get; set; }
+    public DateTime? InitiationTime { get; set; }
 
     // Contingency management
     public ContingencyType Contingency { get; set; } = ContingencyType.None; // Default is no contingency
@@ -23,7 +23,7 @@ public class Session : ISoftDelete
 
     // If the contingency is "Other", a VenueManager must specify a reason
     [MaxLength(500)]
-    private string? ContingencyExplanation { get; set; } // Explanation for "Other" contingencies
+    public string? ContingencyExplanation { get; set; } // Explanation for "Other" contingencies
 
     // Foreign Key to Venue
     public int VenueId { get; set; }
