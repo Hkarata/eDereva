@@ -135,6 +135,11 @@ app.MapScalarApiReference(options =>
         "http://4.221.77.82",
         "Dev server"
     ));
+    options.AddServer(new ScalarServer
+    (
+        "http://localhost",
+        "Local host"
+    ));
 });
 
 app.UseCors(builder =>
