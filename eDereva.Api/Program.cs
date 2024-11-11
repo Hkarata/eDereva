@@ -103,20 +103,32 @@ builder.Services.AddOpenApi(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
+//{
+//    app.MapOpenApi();
+//    app.MapScalarApiReference(options =>
+//    {
+//        options.Title = "eDereva API";
+//        options.Theme = ScalarTheme.Saturn;
+//        options.WithPreferredScheme("Bearer");
+//        options.WithApiKeyAuthentication(keyOptions =>
+//        {
+//            keyOptions.Token = "Token";
+//        });
+//    });
+//}
+
+app.MapOpenApi();
+app.MapScalarApiReference(options =>
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference(options =>
+    options.Title = "eDereva API";
+    options.Theme = ScalarTheme.Saturn;
+    options.WithPreferredScheme("Bearer");
+    options.WithApiKeyAuthentication(keyOptions =>
     {
-        options.Title = "eDereva API";
-        options.Theme = ScalarTheme.Saturn;
-        options.WithPreferredScheme("Bearer");
-        options.WithApiKeyAuthentication(keyOptions =>
-        {
-            keyOptions.Token = "Token";
-        });
+        keyOptions.Token = "Token";
     });
-}
+});
 
 app.UseHttpsRedirection();
 
