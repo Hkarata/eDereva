@@ -10,7 +10,7 @@ namespace eDereva.Api.Extensions
         public async Task InvokeAsync(HttpContext httpContext)
         {
             // Skip API key validation for the exempted path (e.g., /scalar/v1)
-            if (httpContext.Request.Path.StartsWithSegments("/scalar/v1"))
+            if (httpContext.Request.Path.StartsWithSegments("/scalar"))
             {
                 await next(httpContext); // Proceed to the next middleware if path is exempted
                 return;
