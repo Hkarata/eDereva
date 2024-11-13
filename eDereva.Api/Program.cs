@@ -102,6 +102,7 @@ builder.Services.AddOpenApi(options =>
     options.AddDocumentTransformer<ApiKeySecuritySchemeTransformer>();
 });
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -155,8 +156,8 @@ app.UseHttpsRedirection();
 app.UseExceptionHandler();
 
 app.UseAuthentication();
-app.UseMiddleware<JwtRefreshMiddleware>();
-app.UseMiddleware<ApiKeyAuthenticationMiddleware>();
+//app.UseMiddleware<JwtRefreshMiddleware>();
+//app.UseMiddleware<ApiKeyAuthenticationMiddleware>();
 app.UseAuthorization();
 
 app.UseResponseCaching()

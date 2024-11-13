@@ -10,11 +10,10 @@ namespace eDereva.Api.Extensions
         {
             if (context.User.Identity?.IsAuthenticated == true)
             {
-                var tokenString = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var tokenString = context.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
                 var handler = new JwtSecurityTokenHandler();
-                var token = handler.ReadToken(tokenString) as JwtSecurityToken;
 
-                if (token != null && tokenService.IsTokenCloseToExpiring(token))
+                if (handler.ReadToken(tokenString) is JwtSecurityToken token && tokenService.IsTokenCloseToExpiring(token))
                 {
                     var username = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
                     var roles = token.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();

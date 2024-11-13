@@ -1,0 +1,39 @@
+﻿namespace eDereva.Core.Enums
+{
+    [Flags]
+    public enum PermissionFlag
+    {
+        None = 0,
+
+        // User permissions
+        ViewUsers = 1 << 0,
+        EditUsers = 1 << 1,
+        DeleteUsers = 1 << 2,
+        ManageUsers = ViewUsers | EditUsers | DeleteUsers,
+
+        // Venue permissions
+        ViewVenues = 1 << 3,
+        EditVenues = 1 << 4,
+        DeleteVenues = 1 << 5,
+        ManageVenues = ViewVenues | EditVenues | DeleteVenues,
+
+        // Question Bank permissions
+        ViewQuestionBanks = 1 << 6,
+        EditQuestionBanks = 1 << 7,
+        DeleteQuestionBanks = 1 << 8,
+        ManageQuestionBanks = ViewQuestionBanks | EditQuestionBanks | DeleteQuestionBanks,
+
+        // Test permissions
+        ViewTests = 1 << 9,
+        EditTests = 1 << 10,
+        DeleteTests = 1 << 11,
+        ManageTests = ViewTests | EditTests | DeleteTests,
+
+        // Special permissions
+        ViewSoftDeletedData = 1 << 12,
+
+        // Composite permissions
+        Administrator = ManageUsers | ManageVenues | ManageQuestionBanks |
+                       ManageTests | ViewSoftDeletedData
+    }
+}

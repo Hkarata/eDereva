@@ -4,12 +4,11 @@ namespace eDereva.Core.Interfaces
 {
     public interface IRoleRepository
     {
-        Task<Role> GetByIdAsync(Guid roleId);
-        Task<List<Role>> GetAllAsync();
-        Task<Role> AddAsync(Role role);
-        Task<Role> UpdateAsync(Role role);
-        Task DeleteAsync(Role role);
-        Task<List<Role>> GetRolesWithPermissionsAsync(List<Guid> roleIds);
-        Task<List<Guid>> GetRoleIdsAsync();
+        Task<Role?> GetByIdAsync(Guid roleId, CancellationToken cancellationToken);
+        Task<List<Role>> GetAllAsync(CancellationToken cancellationToken);
+        Task<bool> AddAsync(Role role, CancellationToken cancellationToken);
+        Task<Role> UpdateAsync(Role role, CancellationToken cancellationToken);
+        Task<bool> DeleteAsync(Guid roleId, CancellationToken cancellationToken);
+        Task<List<Guid>> GetRoleIdsAsync(CancellationToken cancellationToken);
     }
 }

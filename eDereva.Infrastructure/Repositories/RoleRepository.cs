@@ -2,111 +2,117 @@
 using eDereva.Core.Interfaces;
 using eDereva.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 
 namespace eDereva.Infrastructure.Repositories
 {
-    public class RoleRepository(ApplicationDbContext context, HybridCache hybrdiCache, ILogger<RoleRepository> logger) : IRoleRepository
+    public class RoleRepository(ApplicationDbContext context, ILogger<RoleRepository> logger) : IRoleRepository
     {
-
-        public async Task<Role> GetByIdAsync(Guid roleId)
+        public async Task<bool> AddAsync(Role role, CancellationToken cancellationToken)
         {
-            var cacheKey = $"Role_{roleId}";
+            logger.LogInformation("Checking if the role with name {RoleName} already exists.", role.Name);
 
-            logger.LogInformation("Fetching role with ID {RoleId} from cache or database.", roleId);
+            var roleExists = await CheckRoleNameExistsAsync(role.Name, cancellationToken);
 
-            var role = await hybrdiCache.GetOrCreateAsync<Role>(cacheKey, async (entry) =>
+            if (roleExists)
             {
-                return await context.Roles
-                    .Where(r => r.Id == roleId)
-                    .Include(r => r.Permissions)
-                    .FirstOrDefaultAsync(cancellationToken: entry) ?? null!;
-            });
-
-            if (role == null)
-            {
-                logger.LogWarning("Role with ID {RoleId} not found.", roleId);
-            }
-            else
-            {
-                logger.LogInformation("Role with ID {RoleId} retrieved successfully.", roleId);
+                logger.LogWarning("Role with name {RoleName} already exists. Skipping add operation.", role.Name);
+                return false;
             }
 
-            return role!;
+            logger.LogInformation("Adding role with name {RoleName}.", role.Name);
+            await context.Roles.AddAsync(role, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+
+            logger.LogInformation("Role with name {RoleName} added successfully.", role.Name);
+            return true;
         }
 
-        public async Task<List<Role>> GetAllAsync()
+        public async Task<bool> DeleteAsync(Guid roleId, CancellationToken cancellationToken)
         {
-            var cacheKey = "Roles";
+            logger.LogInformation("Attempting to delete role with ID {RoleId}.", roleId);
 
-            logger.LogInformation("Fetching all roles from cache or database.");
-
-            var roles = await hybrdiCache.GetOrCreateAsync<List<Role>>(cacheKey, async (entry) =>
+            var role = await context.Roles.FindAsync(roleId);
+            if (role == null)
             {
-                return await context.Roles.ToListAsync(cancellationToken: entry);
-            });
+                logger.LogWarning("Role with ID {RoleId} not found. Delete operation skipped.", roleId);
+                return false;
+            }
 
-            logger.LogInformation("{Count} roles retrieved successfully.", roles.Count);
+            context.Roles.Remove(role);
+            await context.SaveChangesAsync(cancellationToken);
 
+            logger.LogInformation("Role with ID {RoleId} deleted successfully.", roleId);
+            return true;
+        }
+
+        public async Task<List<Role>> GetAllAsync(CancellationToken cancellationToken)
+        {
+            logger.LogInformation("Fetching all roles from the database.");
+
+            var roles = await context.Roles
+                .AsNoTracking()
+                .OrderBy(r => r.Name)
+                .ToListAsync(cancellationToken);
+
+            logger.LogInformation("Fetched {RoleCount} roles from the database.", roles.Count);
             return roles;
         }
 
-        public async Task<Role> AddAsync(Role role)
+        public async Task<Role?> GetByIdAsync(Guid roleId, CancellationToken cancellationToken)
         {
-            logger.LogInformation("Adding a new role with ID {RoleId}.", role.Id);
-            await context.Roles.AddAsync(role);
-            await context.SaveChangesAsync();
-            logger.LogInformation("Role with ID {RoleId} added successfully.", role.Id);
+            logger.LogInformation("Fetching role with ID {RoleId} and its permissions.", roleId);
+
+            var role = await context.Roles
+                .AsNoTracking()
+                .Include(r => r.Permission)
+                .FirstOrDefaultAsync(r => r.Id == roleId, cancellationToken: cancellationToken);
+
+            if (role == null)
+            {
+                logger.LogWarning("Role with ID {RoleId} not found or has no permissions.", roleId);
+            }
+
             return role;
         }
 
-        public async Task<Role> UpdateAsync(Role role)
+        public async Task<List<Guid>> GetRoleIdsAsync(CancellationToken cancellationToken)
+        {
+            var roleIds = await context.Roles
+                .AsNoTracking()
+                .Select(r => r.Id)
+                .ToListAsync(cancellationToken);
+
+            return roleIds;
+        }
+
+        public async Task<Role> UpdateAsync(Role role, CancellationToken cancellationToken)
         {
             logger.LogInformation("Updating role with ID {RoleId}.", role.Id);
-            context.Roles.Update(role);
-            await context.SaveChangesAsync();
+
+            var entry = context.Entry(role);
+            if (entry.State == EntityState.Detached)
+            {
+                context.Roles.Attach(role);
+            }
+
+            entry.State = EntityState.Modified;
+            await context.SaveChangesAsync(cancellationToken);
+
             logger.LogInformation("Role with ID {RoleId} updated successfully.", role.Id);
             return role;
         }
 
-        public async Task DeleteAsync(Role role)
+        private async Task<bool> CheckRoleNameExistsAsync(string roleName, CancellationToken cancellationToken)
         {
-            logger.LogInformation("Deleting role with ID {RoleId}.", role.Id);
-            context.Roles.Remove(role);
-            await context.SaveChangesAsync();
-            logger.LogInformation("Role with ID {RoleId} deleted successfully.", role.Id);
+            logger.LogInformation("Checking if the role with name {RoleName} exists in the database.", roleName);
+
+            var exists = await context.Roles
+                .AnyAsync(r => r.Name.ToLower() == roleName.ToLower(), cancellationToken);
+
+            logger.LogInformation("Role with name {RoleName} exists: {Exists}.", roleName, exists);
+            return exists;
         }
 
-        public async Task<List<Role>> GetRolesWithPermissionsAsync(List<Guid> roleIds)
-        {
-            var cacheKey = $"{roleIds.Count} roles";
-            logger.LogInformation("Fetching roles with permissions for {Count} role IDs.", roleIds.Count);
-
-            var roles = await hybrdiCache.GetOrCreateAsync<List<Role>>(cacheKey, async (entry) =>
-            {
-                return await context.Roles
-                    .Where(r => roleIds.Contains(r.Id))
-                    .Include(r => r.Permissions)
-                    .ToListAsync(cancellationToken: entry);
-            });
-
-            logger.LogInformation("{Count} roles with permissions retrieved successfully.", roles.Count);
-            return roles ?? null!;
-        }
-
-        public async Task<List<Guid>> GetRoleIdsAsync()
-        {
-            var cacheKey = "RoleIds";
-            logger.LogInformation("Fetching all role IDs from cache or database.");
-
-            var roleIds = await hybrdiCache.GetOrCreateAsync(cacheKey, async (entry) =>
-            {
-                return await context.Roles.Select(r => r.Id).ToListAsync(cancellationToken: entry);
-            });
-
-            logger.LogInformation("{Count} role IDs retrieved successfully.", roleIds.Count);
-            return roleIds;
-        }
     }
 }

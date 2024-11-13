@@ -46,7 +46,12 @@ namespace eDereva.Infrastructure.Repositories
         public async Task DeleteAsync(string Nin)
         {
             var user = await GetByIdAsync(Nin);
-            user.IsDeleted = true;
+            if (user == null)
+            {
+                logger.LogWarning("User with ID {UserId} not found.", Nin);
+                return;
+            }
+            context.Users.Remove(user);
             await context.SaveChangesAsync();
         }
 

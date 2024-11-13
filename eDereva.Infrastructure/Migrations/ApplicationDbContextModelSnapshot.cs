@@ -68,63 +68,16 @@ namespace eDereva.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("CanDeleteQuestionBanks")
-                        .HasColumnType("bit");
+                    b.Property<int>("Flags")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("CanDeleteTests")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanDeleteUsers")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanDeleteVenues")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanEditQuestionBanks")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanEditTests")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanEditUsers")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanEditVenues")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanManageQuestionBanks")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanManageTests")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanManageUsers")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanManageVenues")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanViewQuestionBanks")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanViewSoftDeletedData")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanViewTests")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanViewUsers")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanViewVenues")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("RoleId")
+                    b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .IsUnique();
 
                     b.ToTable("Permissions");
                 });
@@ -137,7 +90,8 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -169,9 +123,6 @@ namespace eDereva.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -220,14 +171,18 @@ namespace eDereva.Infrastructure.Migrations
 
             modelBuilder.Entity("eDereva.Core.Entities.Permission", b =>
                 {
-                    b.HasOne("eDereva.Core.Entities.Role", null)
-                        .WithMany("Permissions")
-                        .HasForeignKey("RoleId");
+                    b.HasOne("eDereva.Core.Entities.Role", "Role")
+                        .WithOne("Permission")
+                        .HasForeignKey("eDereva.Core.Entities.Permission", "RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Role", b =>
                 {
-                    b.Navigation("Permissions");
+                    b.Navigation("Permission");
                 });
 #pragma warning restore 612, 618
         }

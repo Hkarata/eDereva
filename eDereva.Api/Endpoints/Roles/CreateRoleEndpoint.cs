@@ -2,11 +2,10 @@
 using eDereva.Core.Entities;
 using eDereva.Core.Interfaces;
 using FastEndpoints;
-using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace eDereva.Api.Endpoints.Role
+namespace eDereva.Api.Endpoints.Roles
 {
-    public class CreateRoleEndpoint(IRoleRepository roleRepository) : Endpoint<RoleDto, Core.Entities.Role>
+    public class CreateRoleEndpoint(IRoleRepository roleRepository) : Endpoint<RoleDto, Role>
     {
         public override void Configure()
         {
@@ -23,7 +22,7 @@ namespace eDereva.Api.Endpoints.Role
 
         public override async Task HandleAsync(RoleDto req, CancellationToken ct)
         {
-            var role = new Core.Entities.Role
+            var role = new Role
             {
                 Id = Guid.NewGuid(),
                 Name = req.Name,
@@ -39,10 +38,12 @@ namespace eDereva.Api.Endpoints.Role
             if (result)
             {
                 await SendCreatedAtAsync<CreateRoleEndpoint>($"/roles/{role.Id}", role, cancellation: ct);
+                return;
             }
             else
             {
                 await SendNoContentAsync(cancellation: ct);
+                return;
             }
         }
     }

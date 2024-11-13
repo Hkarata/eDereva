@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Enums;
-using eDereva.Core.Interfaces;
 
 namespace eDereva.Core.Entities
 {
     /// <summary>
     /// Represents a user entity.
     /// </summary>
-    public class User : ISoftDelete
+    public class User
     {
         /// <summary>
         /// Gets or sets the National ID Number.
@@ -67,11 +66,6 @@ namespace eDereva.Core.Entities
         public string Password { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the user is soft deleted.
-        /// </summary>
-        public bool IsDeleted { get; set; }
-
-        /// <summary>
         /// Gets or sets the roles associated with the user.
         /// </summary>
         public ICollection<Role>? Roles { get; set; }
@@ -82,16 +76,6 @@ namespace eDereva.Core.Entities
     /// </summary>
     public static class UserExtensions
     {
-        /// <summary>
-        /// Gets the full name of the user.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <returns>The full name of the user.</returns>
-        public static string GetFullName(this User user)
-        {
-            return $"{user.FirstName} {user.MiddleName} {user.LastName}";
-        }
-
         /// <summary>
         /// Gets the age of the user.
         /// </summary>

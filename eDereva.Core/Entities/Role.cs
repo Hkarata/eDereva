@@ -15,12 +15,14 @@ namespace eDereva.Core.Entities
         /// <summary>
         /// Gets or sets the name of the role.
         /// </summary>
-        [MaxLength(50)] // Limit to 50 characters max
+        [Required]
+        [MaxLength(50)]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the description of the role.
         /// </summary>
+        [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
@@ -31,11 +33,11 @@ namespace eDereva.Core.Entities
         /// <summary>
         /// Gets or sets the collection of users associated with the role.
         /// </summary>
-        public ICollection<User>? Users { get; set; }
+        public virtual ICollection<User>? Users { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of permissions associated with the role.
         /// </summary>
-        public ICollection<Permission>? Permissions { get; set; }
+        public virtual Permission? Permission { get; set; }
     }
 }

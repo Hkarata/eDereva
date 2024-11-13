@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
-      <PackageReference Include="TUnit" Version="0.2.202" />
+      <PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
+      <PackageReference Include="TUnit" Version="0.2.212" />
     </ItemGroup>
 
     <ItemGroup>

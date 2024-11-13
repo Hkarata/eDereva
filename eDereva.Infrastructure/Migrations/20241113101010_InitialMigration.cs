@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -31,7 +30,7 @@ namespace eDereva.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -51,8 +50,7 @@ namespace eDereva.Infrastructure.Migrations
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -65,24 +63,8 @@ namespace eDereva.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CanManageUsers = table.Column<bool>(type: "bit", nullable: false),
-                    CanViewUsers = table.Column<bool>(type: "bit", nullable: false),
-                    CanEditUsers = table.Column<bool>(type: "bit", nullable: false),
-                    CanDeleteUsers = table.Column<bool>(type: "bit", nullable: false),
-                    CanManageVenues = table.Column<bool>(type: "bit", nullable: false),
-                    CanViewVenues = table.Column<bool>(type: "bit", nullable: false),
-                    CanEditVenues = table.Column<bool>(type: "bit", nullable: false),
-                    CanDeleteVenues = table.Column<bool>(type: "bit", nullable: false),
-                    CanManageQuestionBanks = table.Column<bool>(type: "bit", nullable: false),
-                    CanViewQuestionBanks = table.Column<bool>(type: "bit", nullable: false),
-                    CanEditQuestionBanks = table.Column<bool>(type: "bit", nullable: false),
-                    CanDeleteQuestionBanks = table.Column<bool>(type: "bit", nullable: false),
-                    CanManageTests = table.Column<bool>(type: "bit", nullable: false),
-                    CanViewTests = table.Column<bool>(type: "bit", nullable: false),
-                    CanEditTests = table.Column<bool>(type: "bit", nullable: false),
-                    CanDeleteTests = table.Column<bool>(type: "bit", nullable: false),
-                    CanViewSoftDeletedData = table.Column<bool>(type: "bit", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Flags = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,7 +73,8 @@ namespace eDereva.Infrastructure.Migrations
                         name: "FK_Permissions_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -121,7 +104,8 @@ namespace eDereva.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Permissions_RoleId",
                 table: "Permissions",
-                column: "RoleId");
+                column: "RoleId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleUser_UsersNIN",

@@ -1,6 +1,39 @@
-@eDereva.Api_HostAddress = http://localhost:5143
+@eDereva.Api_HostAddress = http://localhost:5143/v1
 
-GET {{eDereva.Api_HostAddress}}/weatherforecast/
+
+###
+GET {{eDereva.Api_HostAddress}}/roles
 Accept: application/json
 
 ###
+GET {{eDereva.Api_HostAddress}}/roles/ids
+Accept: application/json
+
+###
+GET {{eDereva.Api_HostAddress}}/roles/{roleId}
+Accept: application/json
+
+
+###
+POST {{eDereva.Api_HostAddress}}/roles
+Content-Type: application/json
+
+{
+  "name": "Administrator",
+  "description": "Full system administrator with all permissions",
+  "permissions": 8191  
+}
+
+
+###
+PUT {{eDereva.Api_HostAddress}}/roles/{roleId}
+Content-Type: application/json
+
+{
+  "name": "string",
+  "description": "string"
+}
+
+###
+DELETE {{eDereva.Api_HostAddress}}/roles/{roleId}
+Accept: application/json
