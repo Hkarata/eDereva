@@ -37,7 +37,7 @@ namespace eDereva.Api.Endpoints.Roles
 
             if (result)
             {
-                await SendCreatedAtAsync<CreateRoleEndpoint>($"/roles/{role.Id}", role, cancellation: ct);
+                await SendOkAsync();
                 return;
             }
             else

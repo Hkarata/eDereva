@@ -19,7 +19,7 @@ POST {{eDereva.Api_HostAddress}}/roles
 Content-Type: application/json
 
 {
-  "name": "Administrator",
+  "name": "Super user",
   "description": "Full system administrator with all permissions",
   "permissions": 8191  
 }
