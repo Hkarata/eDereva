@@ -9,6 +9,11 @@ namespace eDereva.Infrastructure.Data
         public required DbSet<User> Users { get; set; }
         public required DbSet<Role> Roles { get; set; }
         public required DbSet<Permission> Permissions { get; set; }
+        public required DbSet<Venue> Venues { get; set; }
+        public required DbSet<Session> Sessions { get; set; }
+        public required DbSet<Contingency> Contingencies { get; set; }
+        public required DbSet<Region> Regions { get; set; }
+        public required DbSet<District> Districts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using eDereva.Core.Enums;
 
 namespace eDereva.Core.Entities
 {
@@ -28,6 +27,7 @@ namespace eDereva.Core.Entities
         /// </summary>
         public PermissionFlag Flags { get; set; }
 
+        #region User Permissions
         [NotMapped]
         public bool CanManageUsers => Flags.HasFlag(PermissionFlag.ManageUsers);
         [NotMapped]
@@ -36,6 +36,9 @@ namespace eDereva.Core.Entities
         public bool CanEditUsers => Flags.HasFlag(PermissionFlag.EditUsers);
         [NotMapped]
         public bool CanDeleteUsers => Flags.HasFlag(PermissionFlag.DeleteUsers);
+        #endregion
+
+        #region Venue Permissions
         [NotMapped]
         public bool CanManageVenues => Flags.HasFlag(PermissionFlag.ManageVenues);
         [NotMapped]
@@ -44,6 +47,9 @@ namespace eDereva.Core.Entities
         public bool CanEditVenues => Flags.HasFlag(PermissionFlag.EditVenues);
         [NotMapped]
         public bool CanDeleteVenues => Flags.HasFlag(PermissionFlag.DeleteVenues);
+        #endregion
+
+        #region Question Bank Permissions
         [NotMapped]
         public bool CanManageQuestionBanks => Flags.HasFlag(PermissionFlag.ManageQuestionBanks);
         [NotMapped]
@@ -52,6 +58,9 @@ namespace eDereva.Core.Entities
         public bool CanEditQuestionBanks => Flags.HasFlag(PermissionFlag.EditQuestionBanks);
         [NotMapped]
         public bool CanDeleteQuestionBanks => Flags.HasFlag(PermissionFlag.DeleteQuestionBanks);
+        #endregion
+
+        #region Test Permissions
         [NotMapped]
         public bool CanManageTests => Flags.HasFlag(PermissionFlag.ManageTests);
         [NotMapped]
@@ -60,7 +69,24 @@ namespace eDereva.Core.Entities
         public bool CanEditTests => Flags.HasFlag(PermissionFlag.EditTests);
         [NotMapped]
         public bool CanDeleteTests => Flags.HasFlag(PermissionFlag.DeleteTests);
+        #endregion
+
+        #region Booking Permissions
+        [NotMapped]
+        public bool CanManageBookings => Flags.HasFlag(PermissionFlag.ManageBookings);
+        [NotMapped]
+        public bool CanViewBookings => Flags.HasFlag(PermissionFlag.ViewBookings);
+        [NotMapped]
+        public bool CanCreateBookings => Flags.HasFlag(PermissionFlag.CreateBookings);
+        [NotMapped]
+        public bool CanEditBookings => Flags.HasFlag(PermissionFlag.EditBookings);
+        [NotMapped]
+        public bool CanDeleteBookings => Flags.HasFlag(PermissionFlag.DeleteBookings);
+        #endregion
+
+        #region Special Permissions
         [NotMapped]
         public bool CanViewSoftDeletedData => Flags.HasFlag(PermissionFlag.ViewSoftDeletedData);
+        #endregion
     }
 }

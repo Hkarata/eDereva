@@ -1,6 +1,7 @@
 namespace eDereva.Core.Interfaces;
 
-public class IAudit
+internal interface IAudit
 {
-    
+    public DateTime CreatedAt { get; }
+    public DateTime? ModifiedAt { get; set; }
 }

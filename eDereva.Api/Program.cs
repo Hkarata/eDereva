@@ -156,8 +156,8 @@ app.UseHttpsRedirection();
 app.UseExceptionHandler();
 
 app.UseAuthentication();
-//app.UseMiddleware<JwtRefreshMiddleware>();
-//app.UseMiddleware<ApiKeyAuthenticationMiddleware>();
+app.UseMiddleware<JwtRefreshMiddleware>();
+app.UseMiddleware<ApiKeyAuthenticationMiddleware>();
 app.UseAuthorization();
 
 app.UseResponseCaching()

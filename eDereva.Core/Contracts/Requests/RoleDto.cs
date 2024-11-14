@@ -1,6 +1,4 @@
-﻿using eDereva.Core.Enums;
-
-namespace eDereva.Core.Contracts.Requests
+﻿namespace eDereva.Core.Contracts.Requests
 {
     public record RoleDto
         (
