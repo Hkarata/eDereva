@@ -41,8 +41,6 @@ namespace eDereva.Core.Entities
         /// <summary>
         /// Gets or sets the date of birth of the user.
         /// </summary>
-        [DataType(DataType.Date)]
-        [Range(typeof(DateTime), "1/1/1900", "12/31/2100", ErrorMessage = "Date of birth must be between 1/1/1900 and 12/31/2100.")]
         public DateTime DateOfBirth { get; set; }
 
         /// <summary>

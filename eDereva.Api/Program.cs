@@ -1,6 +1,7 @@
 using System.Text;
 using eDereva.Api.Exceptions;
 using eDereva.Api.Extensions;
+using eDereva.Api.Identity;
 using eDereva.Core.Interfaces;
 using eDereva.Core.Services;
 using eDereva.Core.ValueObjects;
@@ -41,7 +42,7 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddPermissionBasedAuthorization();
 
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 builder.Services.Configure<SmsConfiguration>(configuration.GetSection("SmsService"));
@@ -66,6 +67,7 @@ builder.Services.AddHybridCache(options =>
 });
 #pragma warning restore EXTEXP0018 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
+
 builder.Services.AddCors();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -76,6 +78,7 @@ builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<INIDAService, NIDAService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
+builder.Services.AddScoped<IVenueRepository, VenueRepository>();
 
 builder.Services.AddFastEndpoints()
     .AddResponseCaching();
@@ -138,16 +141,16 @@ app.MapScalarApiReference(options =>
     ));
     options.AddServer(new ScalarServer
     (
-        "http://localhost",
+        "http://localhost:5143",
         "Local host"
     ));
 });
 
-app.UseCors(builder =>
+app.UseCors(corsPolicyBuilder =>
 {
-    builder.AllowAnyOrigin()
-           .AllowAnyMethod()
-           .AllowAnyHeader();
+    corsPolicyBuilder.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
 });
 
 

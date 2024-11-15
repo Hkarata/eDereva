@@ -11,4 +11,7 @@ public class District
     
     // Navigation properties
     public ICollection<Venue>? Venues { get; set; }
+    
+    public Guid? RegionId { get; set; }
+    public Region? Region { get; set; }
 }

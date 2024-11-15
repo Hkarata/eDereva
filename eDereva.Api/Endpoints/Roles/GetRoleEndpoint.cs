@@ -11,7 +11,7 @@ namespace eDereva.Api.Endpoints.Roles
         {
             Get("/roles/{roleId}");
             Version(1);
-            AllowAnonymous();
+            Policies("RequireAdministrator");
             Description(options =>
             {
                 options.WithTags("Role")

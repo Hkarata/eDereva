@@ -9,7 +9,7 @@ namespace eDereva.Api.Endpoints.Roles
         {
             Get("/roles");
             Version(1);
-            AllowAnonymous();
+            Policies("RequireAdministrator");
             Description(options =>
             {
                 options.WithTags("Role")
