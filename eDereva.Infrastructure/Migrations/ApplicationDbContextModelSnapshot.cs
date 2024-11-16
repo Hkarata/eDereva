@@ -34,7 +34,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasIndex("UsersNIN");
 
-                    b.ToTable("RoleUser");
+                    b.ToTable("RoleUser", (string)null);
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Contingency", b =>
@@ -57,7 +57,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("Contingencies");
+                    b.ToTable("Contingencies", (string)null);
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.District", b =>
@@ -78,7 +78,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Districts");
+                    b.ToTable("Districts", (string)null);
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Otp", b =>
@@ -101,7 +101,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Otps");
+                    b.ToTable("Otps", (string)null);
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Permission", b =>
@@ -123,7 +123,7 @@ namespace eDereva.Infrastructure.Migrations
                     b.HasIndex("RoleId")
                         .IsUnique();
 
-                    b.ToTable("Permissions");
+                    b.ToTable("Permissions", (string)null);
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Region", b =>
@@ -139,7 +139,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Regions");
+                    b.ToTable("Regions", (string)null);
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Role", b =>
@@ -163,7 +163,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Session", b =>
@@ -205,7 +205,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", (string)null);
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.User", b =>
@@ -253,7 +253,7 @@ namespace eDereva.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[MiddleName] IS NOT NULL");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Venue", b =>
@@ -289,7 +289,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasIndex("DistrictId");
 
-                    b.ToTable("Venues");
+                    b.ToTable("Venues", (string)null);
                 });
 
             modelBuilder.Entity("RoleUser", b =>
