@@ -37,13 +37,11 @@ namespace eDereva.Api.Endpoints.Roles
 
             if (result)
             {
-                await SendOkAsync();
-                return;
+                await SendOkAsync(ct);
             }
             else
             {
                 await SendNoContentAsync(cancellation: ct);
-                return;
             }
         }
     }

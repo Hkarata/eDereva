@@ -13,7 +13,7 @@ namespace eDereva.Core.Entities
         /// Gets or sets the National ID Number.
         /// </summary>
         [MaxLength(20), Key]
-        public string NIN { get; set; } = string.Empty;
+        public string Nin { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the first name of the user.
@@ -99,7 +99,7 @@ namespace eDereva.Core.Entities
         {
             return new UserData
             {
-                NIN = user.NIN,
+                Nin = user.Nin,
                 FirstName = user.FirstName,
                 MiddleName = user.MiddleName ?? string.Empty,
                 LastName = user.LastName,
