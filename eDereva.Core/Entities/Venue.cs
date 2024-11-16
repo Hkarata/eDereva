@@ -1,3 +1,4 @@
+using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Interfaces;
 
 namespace eDereva.Core.Entities;
@@ -23,5 +24,22 @@ public class Venue : IAudit
     public void UpdateEntity()
     {
         ModifiedAt = DateTime.UtcNow; // Update modification time
+    }
+}
+
+public static class VenueExtensions
+{
+    public static VenueDto MapToVenueDto(this Venue venue)
+    {
+        return new VenueDto
+        {
+            Id = venue.Id,
+            Name = venue.Name,
+            Address = venue.Address,
+            ImageUrls = venue.ImageUrls,
+            Capacity = venue.Capacity,
+            District = venue.District!.Name,
+            Region = venue.District.Region!.Name!,
+        };
     }
 }

@@ -59,9 +59,19 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
         return true;
     }
 
-    public async Task<Venue> UpdateVenue(Venue venue, CancellationToken cancellationToken)
+    public async Task<Venue> UpdateVenue(Guid venueId, Venue updated, CancellationToken cancellationToken)
     {
-        context.Venues.Update(venue);
+        var venue = await GetVenueById(venueId, cancellationToken);
+        
+        if (venue == null)
+            return null!;
+        
+        venue.Name = updated.Name;
+        venue.Address = updated.Address;
+        venue.ImageUrls = updated.ImageUrls;
+        venue.Capacity = updated.Capacity;
+        venue.DistrictId = updated.DistrictId;
+        
         await context.SaveChangesAsync(cancellationToken);
         return venue;
     }
