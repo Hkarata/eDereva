@@ -11,6 +11,7 @@ public class GetVenuesEndpoint(IVenueRepository venueRepository)
     {
         Get("/venues");
         Version(1);
+        Policies("RequireViewVenues");
         Description(options =>
         {
             options.WithTags("Venue")

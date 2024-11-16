@@ -9,6 +9,7 @@ public class UnDeleteVenueEndpoint(IVenueRepository venueRepository) : EndpointW
     {
         Put("/venues/{venueId}/undelete");
         Version(1);
+        Policies("RequireManageVenues");
         Description(options =>
         {
             options.WithTags("Venue")
