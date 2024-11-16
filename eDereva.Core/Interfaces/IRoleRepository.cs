@@ -10,5 +10,6 @@ namespace eDereva.Core.Interfaces
         Task<Role> UpdateAsync(Role role, CancellationToken cancellationToken);
         Task<bool> DeleteAsync(Guid roleId, CancellationToken cancellationToken);
         Task<List<Guid>> GetRoleIdsAsync(CancellationToken cancellationToken);
+        Task<Role?> GetByNameAsync(string roleName, CancellationToken cancellationToken);
     }
 }

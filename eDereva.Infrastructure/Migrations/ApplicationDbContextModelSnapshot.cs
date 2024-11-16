@@ -27,14 +27,14 @@ namespace eDereva.Infrastructure.Migrations
                     b.Property<Guid>("RolesId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("UsersNIN")
+                    b.Property<string>("UsersNin")
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("RolesId", "UsersNIN");
+                    b.HasKey("RolesId", "UsersNin");
 
-                    b.HasIndex("UsersNIN");
+                    b.HasIndex("UsersNin");
 
-                    b.ToTable("RoleUser", (string)null);
+                    b.ToTable("RoleUser");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Contingency", b =>
@@ -57,7 +57,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("Contingencies", (string)null);
+                    b.ToTable("Contingencies");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.District", b =>
@@ -78,7 +78,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Districts", (string)null);
+                    b.ToTable("Districts");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Otp", b =>
@@ -101,7 +101,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Otps", (string)null);
+                    b.ToTable("Otps");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Permission", b =>
@@ -123,7 +123,7 @@ namespace eDereva.Infrastructure.Migrations
                     b.HasIndex("RoleId")
                         .IsUnique();
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Region", b =>
@@ -139,7 +139,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Regions", (string)null);
+                    b.ToTable("Regions");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Role", b =>
@@ -163,7 +163,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Session", b =>
@@ -205,12 +205,12 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("Sessions", (string)null);
+                    b.ToTable("Sessions");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.User", b =>
                 {
-                    b.Property<string>("NIN")
+                    b.Property<string>("Nin")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -247,13 +247,13 @@ namespace eDereva.Infrastructure.Migrations
                     b.Property<int>("Sex")
                         .HasColumnType("int");
 
-                    b.HasKey("NIN");
+                    b.HasKey("Nin");
 
                     b.HasIndex("FirstName", "MiddleName", "LastName")
                         .IsUnique()
                         .HasFilter("[MiddleName] IS NOT NULL");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Venue", b =>
@@ -289,7 +289,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasIndex("DistrictId");
 
-                    b.ToTable("Venues", (string)null);
+                    b.ToTable("Venues");
                 });
 
             modelBuilder.Entity("RoleUser", b =>
@@ -302,7 +302,7 @@ namespace eDereva.Infrastructure.Migrations
 
                     b.HasOne("eDereva.Core.Entities.User", null)
                         .WithMany()
-                        .HasForeignKey("UsersNIN")
+                        .HasForeignKey("UsersNin")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -316,9 +316,11 @@ namespace eDereva.Infrastructure.Migrations
 
             modelBuilder.Entity("eDereva.Core.Entities.District", b =>
                 {
-                    b.HasOne("eDereva.Core.Entities.Region", null)
+                    b.HasOne("eDereva.Core.Entities.Region", "Region")
                         .WithMany("Districts")
                         .HasForeignKey("RegionId");
+
+                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Permission", b =>

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eDereva.Api.Endpoints.User
 {
-    public class CreateUserEndpoint(IUserRepository userRepository, IPasswordService passwordService)
+    public class CreateUserEndpoint(IUserRepository userRepository, IRoleRepository roleRepository, IPasswordService passwordService)
         : Endpoint<CreateUserDto, Results<Ok, BadRequest>>
     {
         public override void Configure()
@@ -39,6 +39,11 @@ namespace eDereva.Api.Endpoints.User
                 MiddleName = req.MiddleName,
                 Password = passwordService.HashPassword(req.Password),
             };
+
+            var role = await roleRepository.GetByNameAsync("Basic User", ct);
+
+            if (role != null) user.Roles?.Add(role);
+
             await userRepository.AddAsync(user, ct);
         }
     }

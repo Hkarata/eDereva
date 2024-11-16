@@ -86,6 +86,23 @@ namespace eDereva.Infrastructure.Repositories
             return roleIds;
         }
 
+        public async Task<Role?> GetByNameAsync(string roleName, CancellationToken cancellationToken)
+        {
+            logger.LogInformation("Fetching role with ID {RoleName} and its permissions.", roleName);
+
+            var role = await context.Roles
+                .AsNoTracking()
+                .Include(r => r.Permission)
+                .FirstOrDefaultAsync(r => r.Name.ToLower() == roleName.ToLower(), cancellationToken: cancellationToken);
+
+            if (role == null)
+            {
+                logger.LogWarning("Role with ID {RoleId} not found or has no permissions.", role!.Id);
+            }
+
+            return role;
+        }
+
         public async Task<Role> UpdateAsync(Role role, CancellationToken cancellationToken)
         {
             logger.LogInformation("Updating role with ID {RoleId}.", role.Id);

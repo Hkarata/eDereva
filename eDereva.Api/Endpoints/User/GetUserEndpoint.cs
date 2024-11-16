@@ -13,7 +13,7 @@ namespace eDereva.Api.Endpoints.User
         {
             Get("/api/users/{nin}");
             Version(1);
-            AllowAnonymous();
+            Policies("RequireViewUsers");
             Description(options =>
             {
                 options.WithTags("User")
