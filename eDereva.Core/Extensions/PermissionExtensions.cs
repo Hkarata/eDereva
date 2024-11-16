@@ -1,4 +1,5 @@
 ﻿using eDereva.Core.Entities;
+using eDereva.Core.Enums;
 
 namespace eDereva.Core.Extensions
 {

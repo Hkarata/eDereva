@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using eDereva.Core.Enums;
 
 namespace eDereva.Core.Entities
 {

@@ -1,5 +1,6 @@
 ﻿using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Entities;
+using eDereva.Core.Enums;
 using eDereva.Core.ValueObjects;
 
 namespace eDereva.Core.Interfaces
@@ -13,5 +14,10 @@ namespace eDereva.Core.Interfaces
         Task DeleteAsync(string nin, CancellationToken cancellationToken);
         Task<List<User>> GetUsersByRoleAsync(Guid roleId, PaginationParams pagination, CancellationToken cancellationToken);
         Task<List<User>> GetUsersWithPermissionsAsync(int permissionId, PaginationParams pagination, CancellationToken cancellationToken);
+
+        Task<(string? Message, bool IsAuthenticated)> AuthenticateAsync(string phoneNumber, string password,
+            CancellationToken cancellationToken);
+        
+        Task<PermissionFlag> GetAggregatePermissionFlag(string phoneNumber, CancellationToken cancellationToken);
     }
 }

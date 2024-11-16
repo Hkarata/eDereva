@@ -1,4 +1,6 @@
-﻿[Flags]
+﻿namespace eDereva.Core.Enums;
+
+[Flags]
 public enum PermissionFlag
 {
     None = 0,
@@ -38,5 +40,5 @@ public enum PermissionFlag
 
     // Composite permissions
     Administrator = ManageUsers | ManageVenues | ManageQuestionBanks |
-                   ManageTests | ManageBookings | ViewSoftDeletedData,
+                    ManageTests | ManageBookings | ViewSoftDeletedData,
 }

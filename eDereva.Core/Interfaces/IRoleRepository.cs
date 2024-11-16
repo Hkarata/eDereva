@@ -1,4 +1,5 @@
 ﻿using eDereva.Core.Entities;
+using eDereva.Core.Enums;
 
 namespace eDereva.Core.Interfaces
 {
@@ -11,5 +12,7 @@ namespace eDereva.Core.Interfaces
         Task<bool> DeleteAsync(Guid roleId, CancellationToken cancellationToken);
         Task<List<Guid>> GetRoleIdsAsync(CancellationToken cancellationToken);
         Task<Role?> GetByNameAsync(string roleName, CancellationToken cancellationToken);
+        Task<PermissionFlag> GetBasicRolePermissionFlag();
+        
     }
 }

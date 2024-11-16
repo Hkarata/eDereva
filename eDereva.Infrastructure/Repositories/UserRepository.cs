@@ -1,6 +1,8 @@
 ﻿using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Entities;
+using eDereva.Core.Enums;
 using eDereva.Core.Interfaces;
+using eDereva.Core.Services;
 using eDereva.Core.ValueObjects;
 using eDereva.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +11,10 @@ using Microsoft.Extensions.Logging;
 
 namespace eDereva.Infrastructure.Repositories
 {
-    public class UserRepository(ApplicationDbContext context, HybridCache hybridCache, ILogger<UserRepository> logger) : IUserRepository
+    public class UserRepository(ApplicationDbContext context,
+        HybridCache hybridCache, ILogger<UserRepository> logger,
+        IPasswordService passwordService) 
+        : IUserRepository
     {
 
         public async Task<User> GetByIdAsync(string nin, CancellationToken cancellationToken)
@@ -89,6 +94,50 @@ namespace eDereva.Infrastructure.Repositories
         public Task<List<User>> GetUsersWithPermissionsAsync(int permissionId, PaginationParams pagination, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<(string? Message, bool IsAuthenticated)> AuthenticateAsync(string phoneNumber, string password, CancellationToken cancellationToken)
+        {
+            var user = await context.Users
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Include(u => u.Roles)
+                .FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
+
+            if (user == null)
+            {
+                return ("User not found", false);  // Returning error message and false for authentication failure
+            }
+
+            var isValidPassword = passwordService.VerifyHashedPassword(user.Password, password);
+
+            return !isValidPassword ? ("Invalid password", false) : // Returning error message and false for invalid password
+                (user.Nin, true); // Returning null for no error and true for successful authentication
+        }
+
+        public async Task<PermissionFlag> GetAggregatePermissionFlag(string phoneNumber, CancellationToken cancellationToken)
+        {
+            // Get all non-deleted roles with their permissions, excluding basic user role
+            var roles = await context.Roles
+                .Where(r => !r.IsDeleted && r.Name != "basic user")
+                .Include(r => r.Permission)
+                .ToListAsync(cancellationToken: cancellationToken);
+
+            if (!roles.Any() || roles.All(r => r.Permission == null))
+            {
+                return PermissionFlag.None;
+            }
+
+            // Get all permission flags
+            var permissionFlags = roles
+                .Where(r => r.Permission != null)
+                .Select(r => r.Permission!.Flags)
+                .ToList();
+
+            // Combine all flags using bitwise OR
+            var combinedFlags = permissionFlags.Aggregate((current, next) => current | next);
+
+            return combinedFlags;
         }
     }
 }

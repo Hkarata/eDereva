@@ -1,4 +1,5 @@
 ﻿using eDereva.Core.Entities;
+using eDereva.Core.Enums;
 using eDereva.Core.Interfaces;
 using eDereva.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -102,6 +103,23 @@ namespace eDereva.Infrastructure.Repositories
 
             return role;
         }
+
+        public async Task<PermissionFlag> GetBasicRolePermissionFlag()
+        {
+            return await context.Roles
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Where(r => r.Name.ToLower() == "basic user")
+                .Include(r => r.Permission)
+                .Select(r => r.Permission!.Flags) // Assuming PermissionFlag is a property of Role
+                .FirstOrDefaultAsync(); // Retrieve the first matching value or default (0 if no match)
+        }
+
+        public Task<PermissionFlag> GetMaxRolePermissionFlag()
+        {
+            throw new NotImplementedException();
+        }
+
 
         public async Task<Role> UpdateAsync(Role role, CancellationToken cancellationToken)
         {
