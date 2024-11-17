@@ -9,6 +9,7 @@ using eDereva.Infrastructure.Data;
 using eDereva.Infrastructure.Repositories;
 using eDereva.Infrastructure.Services;
 using FastEndpoints;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
@@ -105,6 +106,19 @@ builder.Services.AddOpenApi(options =>
     options.AddDocumentTransformer<ApiKeySecuritySchemeTransformer>();
 });
 
+builder.Services.AddHangfire(config => 
+        config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"))
+        .UseDashboardMetrics()
+    );
+
+builder.Services.AddHangfireServer(options =>
+{
+    options.SchedulePollingInterval = TimeSpan.FromSeconds(15);
+});
+
 
 var app = builder.Build();
 
@@ -170,5 +184,11 @@ app.UseResponseCaching()
         options.Versioning.DefaultVersion = 1;
         options.Versioning.PrependToRoute = true;
     });
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = [new HangfireAuthorizationFilter("YourAPIKey")]
+});
+
 
 app.Run();
