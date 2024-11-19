@@ -12,7 +12,8 @@ public class CreateVenueEndpoint(IVenueRepository venueRepository, ILogger<Creat
     {
         Post("/venues");
         Version(1);
-        Policies("RequireManageVenues", "RequireAdministrator");
+        //Policies("RequireManageVenues", "RequireAdministrator");
+        AllowAnonymous();
         Description(options =>
         {
             options.WithTags("Venue")

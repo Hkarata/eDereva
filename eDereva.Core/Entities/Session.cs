@@ -18,6 +18,6 @@ public class Session : ISoftDelete, IAudit
     // Navigation properties
     public Guid VenueId { get; set; }
     public Venue? Venue { get; set; }
-    public Guid ContingencyId { get; set; }
+    public Guid? ContingencyId { get; set; }
     public Contingency? Contingency { get; set; }
 }

@@ -22,6 +22,12 @@ namespace eDereva.Api.Extensions
                 await next(httpContext);
                 return;
             }
+            
+            if (httpContext.Request.Path.StartsWithSegments("/hangfire"))
+            {
+                await next(httpContext);
+                return;
+            }
 
             if (!httpContext.Request.Headers.TryGetValue("X-Api-Key", out var apiKey) || apiKey.FirstOrDefault() != _validApiKey)
             {

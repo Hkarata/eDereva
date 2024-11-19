@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eDereva.FunctionalTests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eDereva.IntegrationTests", "eDereva.IntegrationTests\eDereva.IntegrationTests.csproj", "{90900F3D-36C9-4A29-9F2A-774B68333D5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eDereva.Workflows", "eDereva.Workflows\eDereva.Workflows.csproj", "{A16D0B92-BA7A-4FEA-84EA-E6DB5C5D6B46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{90900F3D-36C9-4A29-9F2A-774B68333D5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90900F3D-36C9-4A29-9F2A-774B68333D5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90900F3D-36C9-4A29-9F2A-774B68333D5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A16D0B92-BA7A-4FEA-84EA-E6DB5C5D6B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A16D0B92-BA7A-4FEA-84EA-E6DB5C5D6B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A16D0B92-BA7A-4FEA-84EA-E6DB5C5D6B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A16D0B92-BA7A-4FEA-84EA-E6DB5C5D6B46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +66,6 @@ Global
 		{292753D6-8F43-4A97-8D47-8DD40F826E8C} = {08A689BE-06D8-47C1-B9D5-802BE69D05B3}
 		{BC301790-38A8-4EA7-B85A-628C900908D4} = {08A689BE-06D8-47C1-B9D5-802BE69D05B3}
 		{90900F3D-36C9-4A29-9F2A-774B68333D5A} = {08A689BE-06D8-47C1-B9D5-802BE69D05B3}
+		{A16D0B92-BA7A-4FEA-84EA-E6DB5C5D6B46} = {5A4DC94A-2C98-41A2-A3A0-FA8AECF8EAEB}
 	EndGlobalSection
 EndGlobal

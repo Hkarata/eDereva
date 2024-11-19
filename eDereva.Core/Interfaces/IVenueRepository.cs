@@ -14,4 +14,5 @@ public interface IVenueRepository
     Task UnDeleteVenue(Guid venueId, CancellationToken cancellationToken);
 
     Task<Venue?> GetVenueById(Guid venueId, CancellationToken cancellationToken);
+    Task<List<Guid>> GetAllVenuesIds(CancellationToken cancellationToken);
 }

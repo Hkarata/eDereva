@@ -175,7 +175,7 @@ namespace eDereva.Infrastructure.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ContingencyId")
+                    b.Property<Guid?>("ContingencyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
@@ -292,6 +292,31 @@ namespace eDereva.Infrastructure.Migrations
                     b.ToTable("Venues");
                 });
 
+            modelBuilder.Entity("eDereva.Core.Entities.VenueExemption", b =>
+                {
+                    b.Property<Guid>("VenueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ExemptionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("HasBeenApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasBeenExempted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("VenueId");
+
+                    b.ToTable("VenueExemptions");
+                });
+
             modelBuilder.Entity("RoleUser", b =>
                 {
                     b.HasOne("eDereva.Core.Entities.Role", null)
@@ -338,9 +363,7 @@ namespace eDereva.Infrastructure.Migrations
                 {
                     b.HasOne("eDereva.Core.Entities.Contingency", "Contingency")
                         .WithMany("AffectedSessions")
-                        .HasForeignKey("ContingencyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContingencyId");
 
                     b.HasOne("eDereva.Core.Entities.Venue", "Venue")
                         .WithMany("Sessions")

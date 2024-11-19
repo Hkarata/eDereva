@@ -14,6 +14,7 @@ namespace eDereva.Infrastructure.Data
         public required DbSet<Contingency> Contingencies { get; set; }
         public required DbSet<Region> Regions { get; set; }
         public required DbSet<District> Districts { get; set; }
+        public required DbSet<VenueExemption> VenueExemptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

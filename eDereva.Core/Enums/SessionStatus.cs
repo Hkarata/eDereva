@@ -3,5 +3,5 @@ public enum SessionStatus
 {
     Active,
     Canceled,
-    Pending
+    Scheduled
 }

@@ -99,6 +99,14 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<List<Guid>> GetAllVenuesIds(CancellationToken cancellationToken)
+    {
+        return await context.Venues.AsNoTracking()
+            .Where(v => !v.IsDeleted)
+            .Select(v => v.Id)
+            .ToListAsync(cancellationToken);
+    }
+
     private async Task<bool> IsVenueUniqueAsync(string venueName, CancellationToken cancellationToken)
     {
         return await context.Venues

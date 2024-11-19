@@ -29,6 +29,7 @@
     <ItemGroup>
       <ProjectReference Include="..\eDereva.Core\eDereva.Core.csproj" />
       <ProjectReference Include="..\eDereva.Infrastructure\eDereva.Infrastructure.csproj" />
+      <ProjectReference Include="..\eDereva.Workflows\eDereva.Workflows.csproj" />
     </ItemGroup>
 
 </Project>

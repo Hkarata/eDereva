@@ -3,11 +3,14 @@ using eDereva.Api.Exceptions;
 using eDereva.Api.Extensions;
 using eDereva.Api.Identity;
 using eDereva.Core.Interfaces;
+using eDereva.Core.Jobs;
 using eDereva.Core.Services;
 using eDereva.Core.ValueObjects;
 using eDereva.Infrastructure.Data;
 using eDereva.Infrastructure.Repositories;
 using eDereva.Infrastructure.Services;
+using eDereva.Workflows.Jobs;
+using eDereva.Workflows.Services;
 using FastEndpoints;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -80,6 +83,10 @@ builder.Services.AddScoped<INIDAService, NIDAService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IVenueRepository, VenueRepository>();
+builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+builder.Services.AddScoped<IVenueExemptionService, VenueExemptionService>();
+builder.Services.AddScoped<ISessionCreationJob, SessionCreationJob>();
+builder.Services.AddScoped<IPublicHolidayService, PublicHolidayService>();
 
 builder.Services.AddFastEndpoints()
     .AddResponseCaching();
@@ -185,10 +192,7 @@ app.UseResponseCaching()
         options.Versioning.PrependToRoute = true;
     });
 
-app.UseHangfireDashboard("/hangfire", new DashboardOptions
-{
-    Authorization = [new HangfireAuthorizationFilter("YourAPIKey")]
-});
+app.UseHangfireDashboard();
 
 
 app.Run();
