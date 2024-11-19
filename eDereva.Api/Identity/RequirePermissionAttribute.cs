@@ -63,6 +63,18 @@ namespace eDereva.Api.Identity
                 options.AddPolicy("RequireManageVenues", policy =>
                     policy.RequireClaim("Permissions", PermissionFlag.ManageVenues.ToString()));
 
+                // Session permissions
+                options.AddPolicy("RequireViewSessions", policy =>
+                    policy.RequireClaim("Permissions", PermissionFlag.ViewSessions.ToString()));
+                options.AddPolicy("RequireCreateSessions", policy =>
+                    policy.RequireClaim("Permissions", PermissionFlag.CreateSessions.ToString()));
+                options.AddPolicy("RequireEditSessions", policy =>
+                    policy.RequireClaim("Permissions", PermissionFlag.EditSessions.ToString()));
+                options.AddPolicy("RequireDeleteSessions", policy =>
+                    policy.RequireClaim("Permissions", PermissionFlag.DeleteSessions.ToString()));
+                options.AddPolicy("RequireManageSessions", policy =>
+                    policy.RequireClaim("Permissions", PermissionFlag.ManageSessions.ToString()));
+                
                 // Question Bank permissions
                 options.AddPolicy("RequireViewQuestionBanks", policy =>
                     policy.RequireClaim("Permissions", PermissionFlag.ViewQuestionBanks.ToString()));

@@ -15,6 +15,13 @@ public enum PermissionFlag
     EditVenues = 1 << 4,
     DeleteVenues = 1 << 5,
     ManageVenues = ViewVenues | EditVenues | DeleteVenues,
+    
+    // Session permissions
+    ViewSessions = 1 << 17,
+    CreateSessions = 1 << 18,
+    EditSessions = 1 << 19,
+    DeleteSessions = 1 << 20,
+    ManageSessions = ViewSessions | CreateSessions | EditSessions | DeleteSessions,
 
     // Question Bank permissions
     ViewQuestionBanks = 1 << 6,

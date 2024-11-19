@@ -1,3 +1,4 @@
+using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Entities;
 using eDereva.Core.Enums;
 using eDereva.Core.Interfaces;
@@ -11,16 +12,31 @@ namespace eDereva.Infrastructure.Repositories
     public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepository> logger)
         : ISessionRepository
     {
-        public async Task<Session?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<SessionDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             logger.LogInformation("Fetching session with ID: {SessionId}", id);
 
             var session = await context.Sessions
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Where(s => s.Id == id && !s.IsDeleted)
                 .Include(s => s.Venue)
                     .ThenInclude(v => v!.District)
                         .ThenInclude(d => d!.Region)
                 .Include(s => s.Contingency)
-                .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted, cancellationToken);
+                .Select(s => new SessionDto
+                {
+                    Id = s.Id,
+                    Date = s.Date,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    Contingency = s.Contingency!.ContingencyType,
+                    ContingencyExplanation = s.Contingency.ContingencyExplanation,
+                    Venue = s.Venue!.Name,
+                    District = s.Venue.District!.Name,
+                    Region = s.Venue.District.Region!.Name
+                })
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (session == null)
             {
@@ -34,19 +50,34 @@ namespace eDereva.Infrastructure.Repositories
             return session;
         }
 
-        public async Task<PaginatedResult<Session>> GetAllAsync(
-            PaginationParams paginationParams, 
+        public async ValueTask<PaginatedResult<SessionDto>> GetAllAsync(PaginationParams paginationParams,
             CancellationToken cancellationToken = default)
         {
             logger.LogInformation("Fetching all sessions with pagination: Page {PageNumber}, Size {PageSize}",
                 paginationParams.PageNumber, paginationParams.PageSize);
 
             var query = context.Sessions
-                .Include(s => s.Venue)
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Include(s => s.Contingency)
+                .Include(s => s.Venue)
+                .ThenInclude(v => v!.District)
+                .ThenInclude(d => d!.Region)
                 .Where(s => !s.IsDeleted)
                 .OrderBy(s => s.Date)
-                .ThenBy(s => s.StartTime);
+                .ThenBy(s => s.StartTime)
+                .Select(s => new SessionDto
+                {
+                    Id = s.Id,
+                    Date = s.Date,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    Contingency = s.Contingency!.ContingencyType,
+                    ContingencyExplanation = s.Contingency.ContingencyExplanation,
+                    Venue = s.Venue!.Name,
+                    District = s.Venue.District!.Name,
+                    Region = s.Venue.District.Region!.Name
+                });
 
             var totalCount = await query.CountAsync(cancellationToken);
             var items = await query
@@ -56,10 +87,10 @@ namespace eDereva.Infrastructure.Repositories
 
             logger.LogInformation("Fetched {TotalCount} sessions.", totalCount);
 
-            return new PaginatedResult<Session>(items, totalCount, paginationParams);
+            return new PaginatedResult<SessionDto>(items, totalCount, paginationParams);
         }
 
-        public async Task<PaginatedResult<Session>> GetByVenueIdAsync(
+        public async Task<PaginatedResult<SessionDto>> GetByVenueIdAsync(
             Guid venueId, 
             PaginationParams paginationParams, 
             CancellationToken cancellationToken = default)
@@ -68,11 +99,19 @@ namespace eDereva.Infrastructure.Repositories
                 venueId, paginationParams.PageNumber, paginationParams.PageSize);
 
             var query = context.Sessions
-                .Include(s => s.Venue)
                 .Include(s => s.Contingency)
                 .Where(s => s.VenueId == venueId && !s.IsDeleted)
                 .OrderBy(s => s.Date)
-                .ThenBy(s => s.StartTime);
+                .ThenBy(s => s.StartTime)
+                .Select(s => new SessionDto
+                {
+                    Id = s.Id,
+                    Date = s.Date,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    Contingency = s.Contingency!.ContingencyType,
+                    ContingencyExplanation = s.Contingency.ContingencyExplanation
+                });
 
             var totalCount = await query.CountAsync(cancellationToken);
             var items = await query
@@ -82,7 +121,7 @@ namespace eDereva.Infrastructure.Repositories
 
             logger.LogInformation("Fetched {TotalCount} sessions for Venue ID: {VenueId}.", totalCount, venueId);
 
-            return new PaginatedResult<Session>(items, totalCount, paginationParams);
+            return new PaginatedResult<SessionDto>(items, totalCount, paginationParams);
         }
 
         public async Task<PaginatedResult<Session>> GetByContingencyIdAsync(
@@ -111,24 +150,46 @@ namespace eDereva.Infrastructure.Repositories
             return new PaginatedResult<Session>(items, totalCount, paginationParams);
         }
 
-        public async Task<IEnumerable<Session>> GetSessionsByDateRangeAsync(
+        public async Task<PaginatedResult<SessionDto>> GetSessionsByDateRangeAsync(
             DateTime startDate, 
-            DateTime endDate, 
+            DateTime endDate,
+            PaginationParams paginationParams,
             CancellationToken cancellationToken = default)
         {
             logger.LogInformation("Fetching sessions between {StartDate} and {EndDate}.", startDate, endDate);
 
-            var sessions = await context.Sessions
-                .Include(s => s.Venue)
+            var query = context.Sessions
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Include(s => s.Contingency)
+                .Include(s => s.Venue)
+                .ThenInclude(v => v!.District)
+                .ThenInclude(d => d!.Region)
                 .Where(s => s.Date >= startDate && s.Date <= endDate && !s.IsDeleted)
                 .OrderBy(s => s.Date)
                 .ThenBy(s => s.StartTime)
+                .Select(s => new SessionDto
+                {
+                    Id = s.Id,
+                    Date = s.Date,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    Contingency = s.Contingency!.ContingencyType,
+                    ContingencyExplanation = s.Contingency.ContingencyExplanation,
+                    Venue = s.Venue!.Name,
+                    District = s.Venue.District!.Name,
+                    Region = s.Venue.District.Region!.Name
+                });
+
+            var totalCount = await query.CountAsync(cancellationToken);
+            var sessions = await query
+                .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+                .Take(paginationParams.PageSize)
                 .ToListAsync(cancellationToken);
 
             logger.LogInformation("Fetched {SessionCount} sessions between {StartDate} and {EndDate}.", sessions.Count, startDate, endDate);
 
-            return sessions;
+            return new PaginatedResult<SessionDto>(sessions, totalCount, paginationParams);
         }
 
         public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
