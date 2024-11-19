@@ -15,7 +15,7 @@ public class GetUsersEndpoint(IUserRepository userRepository)
         Policies("RequireViewUsers");
         Description(options =>
         {
-            options.WithTags("Users")
+            options.WithTags("User")
                 .WithSummary("Retrieves a paginated list of users")
                 .WithDescription("This endpoint retrieves a paginated list of users based on the provided pagination parameters. It supports filtering and sorting where applicable.");
         });
