@@ -46,6 +46,6 @@ public enum PermissionFlag
     ViewSoftDeletedData = 1 << 12,
 
     // Composite permissions
-    Administrator = ManageUsers | ManageVenues | ManageQuestionBanks |
+    Administrator = ManageUsers | ManageVenues | ManageSessions | ManageQuestionBanks |
                     ManageTests | ManageBookings | ViewSoftDeletedData,
 }

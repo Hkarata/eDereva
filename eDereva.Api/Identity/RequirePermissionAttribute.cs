@@ -17,17 +17,17 @@ namespace eDereva.Api.Identity
                 return;
             }
 
-            var permissionsClaim = user.Claims.FirstOrDefault(c => c.Type == "Permissions");
+            var permissionsClaim = user.Claims.FirstOrDefault(c => c.Type == "Permission");
             if (permissionsClaim == null)
             {
                 context.Result = new ForbidResult();
                 return;
             }
 
-            if (Enum.TryParse<PermissionFlag>(permissionsClaim.Value, out var userPermissions))
+            var permissionsList = permissionsClaim.Value.Split(',').Select(p => p.Trim()).ToList();
+            if (permissionsList.Contains(permission.ToString()))
             {
-                if (userPermissions.HasFlag(permission)) return;
-                context.Result = new ForbidResult();
+                return;
             }
             else
             {
@@ -41,80 +41,91 @@ namespace eDereva.Api.Identity
     {
         public static IServiceCollection AddPermissionBasedAuthorization(this IServiceCollection services)
         {
-            services.AddAuthorization(options =>
-            {
-                // User permissions
-                options.AddPolicy("RequireViewUsers", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ViewUsers.ToString()));
-                options.AddPolicy("RequireEditUsers", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.EditUsers.ToString()));
-                options.AddPolicy("RequireDeleteUsers", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.DeleteUsers.ToString()));
-                options.AddPolicy("RequireManageUsers", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ManageUsers.ToString()));
-
-                // Venue permissions
-                options.AddPolicy("RequireViewVenues", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ViewVenues.ToString()));
-                options.AddPolicy("RequireEditVenues", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.EditVenues.ToString()));
-                options.AddPolicy("RequireDeleteVenues", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.DeleteVenues.ToString()));
-                options.AddPolicy("RequireManageVenues", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ManageVenues.ToString()));
-
-                // Session permissions
-                options.AddPolicy("RequireViewSessions", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ViewSessions.ToString()));
-                options.AddPolicy("RequireCreateSessions", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.CreateSessions.ToString()));
-                options.AddPolicy("RequireEditSessions", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.EditSessions.ToString()));
-                options.AddPolicy("RequireDeleteSessions", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.DeleteSessions.ToString()));
-                options.AddPolicy("RequireManageSessions", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ManageSessions.ToString()));
-                
-                // Question Bank permissions
-                options.AddPolicy("RequireViewQuestionBanks", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ViewQuestionBanks.ToString()));
-                options.AddPolicy("RequireEditQuestionBanks", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.EditQuestionBanks.ToString()));
-                options.AddPolicy("RequireDeleteQuestionBanks", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.DeleteQuestionBanks.ToString()));
-                options.AddPolicy("RequireManageQuestionBanks", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ManageQuestionBanks.ToString()));
-
-                // Test permissions
-                options.AddPolicy("RequireViewTests", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ViewTests.ToString()));
-                options.AddPolicy("RequireEditTests", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.EditTests.ToString()));
-                options.AddPolicy("RequireDeleteTests", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.DeleteTests.ToString()));
-                options.AddPolicy("RequireManageTests", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ManageTests.ToString()));
-
-                // Booking permissions
-                options.AddPolicy("RequireViewBookings", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ViewBookings.ToString()));
-                options.AddPolicy("RequireCreateBookings", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.CreateBookings.ToString()));
-                options.AddPolicy("RequireEditBookings", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.EditBookings.ToString()));
-                options.AddPolicy("RequireDeleteBookings", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.DeleteBookings.ToString()));
-                options.AddPolicy("RequireManageBookings", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ManageBookings.ToString()));
-
-                // Special permissions
-                options.AddPolicy("RequireViewSoftDeletedData", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.ViewSoftDeletedData.ToString()));
-
-                // Composite permissions
-                options.AddPolicy("RequireAdministrator", policy =>
-                    policy.RequireClaim("Permissions", PermissionFlag.Administrator.ToString()));
-            });
+            services.AddAuthorizationBuilder()
+                .AddPolicy("RequireViewUsers", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ViewUsers.ToString()))))
+                .AddPolicy("RequireEditUsers", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.EditUsers.ToString()))))
+                .AddPolicy("RequireDeleteUsers", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.DeleteUsers.ToString()))))
+                .AddPolicy("RequireManageUsers", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ManageUsers.ToString()))))
+                .AddPolicy("RequireViewVenues", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ViewVenues.ToString()))))
+                .AddPolicy("RequireEditVenues", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.EditVenues.ToString()))))
+                .AddPolicy("RequireDeleteVenues", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.DeleteVenues.ToString()))))
+                .AddPolicy("RequireManageVenues", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ManageVenues.ToString()))))
+                .AddPolicy("RequireViewSessions", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ViewSessions.ToString()))))
+                .AddPolicy("RequireCreateSessions", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.CreateSessions.ToString()))))
+                .AddPolicy("RequireEditSessions", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.EditSessions.ToString()))))
+                .AddPolicy("RequireDeleteSessions", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.DeleteSessions.ToString()))))
+                .AddPolicy("RequireManageSessions", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ManageSessions.ToString()))))
+                .AddPolicy("RequireViewQuestionBanks", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ViewQuestionBanks.ToString()))))
+                .AddPolicy("RequireEditQuestionBanks", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.EditQuestionBanks.ToString()))))
+                .AddPolicy("RequireDeleteQuestionBanks", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.DeleteQuestionBanks.ToString()))))
+                .AddPolicy("RequireManageQuestionBanks", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ManageQuestionBanks.ToString()))))
+                .AddPolicy("RequireViewTests", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ViewTests.ToString()))))
+                .AddPolicy("RequireEditTests", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.EditTests.ToString()))))
+                .AddPolicy("RequireDeleteTests", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.DeleteTests.ToString()))))
+                .AddPolicy("RequireManageTests", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ManageTests.ToString()))))
+                .AddPolicy("RequireViewBookings", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ViewBookings.ToString()))))
+                .AddPolicy("RequireCreateBookings", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.CreateBookings.ToString()))))
+                .AddPolicy("RequireEditBookings", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.EditBookings.ToString()))))
+                .AddPolicy("RequireDeleteBookings", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.DeleteBookings.ToString()))))
+                .AddPolicy("RequireManageBookings", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ManageBookings.ToString()))))
+                .AddPolicy("RequireViewSoftDeletedData", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.ViewSoftDeletedData.ToString()))))
+                .AddPolicy("RequireAdministrator", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Permission" && c.Value.Split(',').Contains(PermissionFlag.Administrator.ToString()))));
             return services;
         }
     }

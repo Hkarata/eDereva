@@ -15,18 +15,21 @@ namespace eDereva.Infrastructure.Services
         private readonly string _audience = configuration["Jwt:Audience"] ?? throw new ArgumentNullException(nameof(configuration), "Audience cannot be null");
 
         public string GenerateToken(string username, PermissionFlag permissions)
-        {
+        {   
             if (string.IsNullOrEmpty(username))
                 throw new ArgumentException("Username cannot be null or empty", nameof(username));
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
+            
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, username),
-                new("Permissions", permissions.ToString())
+                new(ClaimTypes.Name, username)
             };
+
+            claims.AddRange(Enum.GetValues<PermissionFlag>()
+                .Where(permission => permissions.HasFlag(permission) && permission != PermissionFlag.None)
+                .Select(permission => new Claim("Permission", permission.ToString())));
 
             var token = new JwtSecurityToken(
                 issuer: _issuer,

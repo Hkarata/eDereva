@@ -16,7 +16,6 @@ namespace eDereva.Infrastructure.Repositories
         IPasswordService passwordService) 
         : IUserRepository
     {
-
         public async Task<User> GetByIdAsync(string nin, CancellationToken cancellationToken)
         {
             var cacheKey = $"User_{nin}";
@@ -26,8 +25,8 @@ namespace eDereva.Infrastructure.Repositories
             {
                 logger.LogInformation("User with ID {UserId} not found in cache. Fetching from database.", nin);
                 return await context.Users
-                                 .Include(u => u.Roles)
-                                 .FirstOrDefaultAsync(u => u.Nin == nin, cancellationToken: entry) ?? null!;
+                    //.Include(u => u.Roles!) // Using null-forgiving operator
+                    .FirstOrDefaultAsync(u => u.Nin == nin, cancellationToken: entry) ?? null!;
             }, cancellationToken: cancellationToken);
 
             return user;
