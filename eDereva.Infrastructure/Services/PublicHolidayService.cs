@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 
-namespace eDereva.Workflows.Services;
+namespace eDereva.Infrastructure.Services;
 
 public interface IPublicHolidayService
 {
