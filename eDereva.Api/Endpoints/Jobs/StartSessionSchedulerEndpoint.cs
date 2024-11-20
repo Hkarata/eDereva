@@ -9,7 +9,7 @@ public class StartSessionSchedulerEndpoint : EndpointWithoutRequest
     public override void Configure()
     {
         Get("/jobs/start-session-scheduler");
-        AllowAnonymous();
+        Policies("RequireAdministrator");
         Description(options =>
         {
             options.WithTags("Jobs")
