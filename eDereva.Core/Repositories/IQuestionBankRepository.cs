@@ -6,8 +6,8 @@ namespace eDereva.Core.Repositories;
 
 public interface IQuestionBankRepository
 {
-    ValueTask<Question?> GetByIdAsync(Guid questionId, CancellationToken cancellationToken);
-    ValueTask<PaginatedResult<Question>> GetAllAsync(Guid questionBankId, PaginationParams paginationParams, CancellationToken cancellationToken);
+    ValueTask<QuestionDto?> GetByIdAsync(Guid questionId, CancellationToken cancellationToken);
+    ValueTask<PaginatedResult<QuestionDto>> GetAllAsync(Guid questionBankId, PaginationParams paginationParams, CancellationToken cancellationToken);
     Task AddAsync(Question question, CancellationToken cancellationToken);
     Task UpdateAsync(Question question, CancellationToken cancellationToken);
     Task DeleteAsync(Guid questionId, CancellationToken cancellationToken);

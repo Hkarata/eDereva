@@ -12,11 +12,11 @@ public class QuestionDto
 
 public static class QuestionExtensions
 {
-    public static (Question question, Guid questionId, Guid choiceId) MapToQuestion(this QuestionDto dto)
+    public static (Question question, Guid questionId, Guid choiceId) MapToQuestion(this QuestionDto dto, Guid questionId = default)
     {
         var question = new Question
         {
-            Id = Guid.CreateVersion7(),
+            Id = questionId != Guid.Empty ? questionId : Guid.CreateVersion7(),
             Scenario = dto.Scenario,
             ImageUrls = dto.ImageUrls,
             QuestionText = dto.QuestionText,
