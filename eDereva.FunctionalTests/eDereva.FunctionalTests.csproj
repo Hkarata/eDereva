@@ -9,7 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="System.Formats.Asn1" Version="9.0.0"/>
-        <PackageReference Include="TUnit" Version="0.2.212"/>
+        <PackageReference Include="TUnit" Version="0.3.34"/>
     </ItemGroup>
 
     <ItemGroup>

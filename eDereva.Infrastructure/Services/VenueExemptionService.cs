@@ -91,7 +91,7 @@ public class VenueExemptionService(
         }
     }
 
-    public async Task<PaginatedResult<ExemptVenueDto>> GetNewExemptionRequests(
+    public async Task<PaginatedResult<Core.Contracts.Responses.ExemptVenueDto>> GetNewExemptionRequests(
         PaginationParams paginationParams,
         CancellationToken cancellationToken)
     {
@@ -101,50 +101,44 @@ public class VenueExemptionService(
             paginationParams.PageSize
         );
 
-        try
-        {
-            var query = context.VenueExemptions
-                .Where(v => !v.HasBeenApproved && !v.HasBeenExempted)
-                .OrderByDescending(v => v.ExemptionDate)
-                .AsQueryable();
-
-            var totalCount = await query.CountAsync(cancellationToken);
-
-            logger.LogDebug("Total count of unprocessed exemption requests: {TotalCount}", totalCount);
-
-            var items = await query
-                .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
-                .Take(paginationParams.PageSize)
-                .Select(v => new ExemptVenueDto
-                {
-                    VenueId = v.VenueId,
-                    ExemptionDate = v.ExemptionDate,
-                    Reason = v.Reason
-                })
-                .ToListAsync(cancellationToken);
-
-            var result = new PaginatedResult<ExemptVenueDto>(items, totalCount, paginationParams);
-
-            logger.LogInformation(
-                "Retrieved {ItemCount} exemption requests (page {PageNumber} of {TotalPages})",
-                items.Count,
-                paginationParams.PageNumber,
-                result.TotalPages
+        var query = context.VenueExemptions
+            .Where(v => !v.HasBeenApproved && !v.HasBeenExempted)
+            .OrderByDescending(v => v.ExemptionDate)
+            .Join(
+                context.Venues,
+                exemption => exemption.VenueId,
+                venue => venue.Id,
+                (exemption, venue) => new { exemption, venue }
             );
 
-            return result;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(
-                ex,
-                "Failed to retrieve exemption requests for page {PageNumber}, size {PageSize}",
-                paginationParams.PageNumber,
-                paginationParams.PageSize
-            );
-            throw;
-        }
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        logger.LogDebug("Total count of unprocessed exemption requests: {TotalCount}", totalCount);
+
+        var items = await query
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+            .Take(paginationParams.PageSize)
+            .Select(v => new Core.Contracts.Responses.ExemptVenueDto
+            {
+                VenueId = v.exemption.VenueId,
+                VenueName = v.venue.Name,
+                ExemptionDate = v.exemption.ExemptionDate,
+                Reason = v.exemption.Reason
+            })
+            .ToListAsync(cancellationToken);
+
+        var result = new PaginatedResult<Core.Contracts.Responses.ExemptVenueDto>(items, totalCount, paginationParams);
+
+        logger.LogInformation(
+            "Retrieved {ItemCount} exemption requests (page {PageNumber} of {TotalPages})",
+            items.Count,
+            paginationParams.PageNumber,
+            result.TotalPages
+        );
+
+        return result;
     }
+
 
     public async Task<bool> IsVenueExemptedForDate(Guid pairVenueId, DateTime pairDate,
         CancellationToken cancellationToken)

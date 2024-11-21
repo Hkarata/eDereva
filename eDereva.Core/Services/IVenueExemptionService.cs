@@ -11,7 +11,7 @@ public interface IVenueExemptionService
     Task<List<Guid>> GetExemptedVenuesInDateRange(DateTime startDate, DateTime endDate,
         CancellationToken cancellationToken);
 
-    Task<PaginatedResult<ExemptVenueDto>> GetNewExemptionRequests(PaginationParams paginationParams,
+    Task<PaginatedResult<Contracts.Responses.ExemptVenueDto>> GetNewExemptionRequests(PaginationParams paginationParams,
         CancellationToken cancellationToken);
 
     Task<bool> IsVenueExemptedForDate(Guid pairVenueId, DateTime pairDate, CancellationToken cancellationToken);
