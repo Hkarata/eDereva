@@ -37,6 +37,40 @@ namespace eDereva.Infrastructure.Migrations
                     b.ToTable("RoleUser");
                 });
 
+            modelBuilder.Entity("eDereva.Core.Entities.Answer", b =>
+                {
+                    b.Property<Guid>("ChoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.ToTable("Answers");
+                });
+
+            modelBuilder.Entity("eDereva.Core.Entities.Choice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Choices");
+                });
+
             modelBuilder.Entity("eDereva.Core.Entities.Contingency", b =>
                 {
                     b.Property<Guid>("Id")
@@ -124,6 +158,58 @@ namespace eDereva.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("eDereva.Core.Entities.Question", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.PrimitiveCollection<string>("ImageUrls")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("QuestionBankId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Scenario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionBankId");
+
+                    b.ToTable("Questions");
+                });
+
+            modelBuilder.Entity("eDereva.Core.Entities.QuestionBank", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestionBanks");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Region", b =>
@@ -332,6 +418,17 @@ namespace eDereva.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("eDereva.Core.Entities.Choice", b =>
+                {
+                    b.HasOne("eDereva.Core.Entities.Question", "Question")
+                        .WithMany("Choices")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("eDereva.Core.Entities.Contingency", b =>
                 {
                     b.HasOne("eDereva.Core.Entities.Venue", null)
@@ -357,6 +454,17 @@ namespace eDereva.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("eDereva.Core.Entities.Question", b =>
+                {
+                    b.HasOne("eDereva.Core.Entities.QuestionBank", "QuestionBank")
+                        .WithMany("Questions")
+                        .HasForeignKey("QuestionBankId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("QuestionBank");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Session", b =>
@@ -395,6 +503,16 @@ namespace eDereva.Infrastructure.Migrations
             modelBuilder.Entity("eDereva.Core.Entities.District", b =>
                 {
                     b.Navigation("Venues");
+                });
+
+            modelBuilder.Entity("eDereva.Core.Entities.Question", b =>
+                {
+                    b.Navigation("Choices");
+                });
+
+            modelBuilder.Entity("eDereva.Core.Entities.QuestionBank", b =>
+                {
+                    b.Navigation("Questions");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Region", b =>
