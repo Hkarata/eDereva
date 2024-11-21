@@ -28,7 +28,7 @@ public class StartSessionSchedulerEndpoint : EndpointWithoutRequest
                 ct),
             "0 3 * * 0"
         );
-        
+
         await SendOkAsync(ct);
     }
 }

@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\eDereva.Core\eDereva.Core.csproj" />
+        <ProjectReference Include="..\eDereva.Core\eDereva.Core.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="TUnit" Version="0.2.212" />
+        <PackageReference Include="TUnit" Version="0.2.212"/>
     </ItemGroup>
 
 </Project>

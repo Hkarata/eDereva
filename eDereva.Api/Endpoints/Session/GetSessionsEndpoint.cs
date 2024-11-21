@@ -1,5 +1,5 @@
 using eDereva.Core.Contracts.Responses;
-using eDereva.Core.Interfaces;
+using eDereva.Core.Repositories;
 using eDereva.Core.ValueObjects;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -19,22 +19,21 @@ public class GetSessionsEndpoint(ISessionRepository sessionRepository, HybridCac
         {
             options.WithTags("Session")
                 .WithSummary("Retrieves a paginated list of sessions")
-                .WithDescription("This endpoint retrieves a paginated list of sessions based on the provided pagination parameters. It supports filtering and sorting where applicable.");
+                .WithDescription(
+                    "This endpoint retrieves a paginated list of sessions based on the provided pagination parameters. It supports filtering and sorting where applicable.");
         });
     }
 
-    public override async Task<Results<Ok<PaginatedResult<SessionDto>>, BadRequest>> ExecuteAsync(PaginationParams req, CancellationToken ct)
+    public override async Task<Results<Ok<PaginatedResult<SessionDto>>, BadRequest>> ExecuteAsync(PaginationParams req,
+        CancellationToken ct)
     {
         const string cachekey = "sessions";
-        
-        var sessions = await hybridCache.GetOrCreateAsync<PaginatedResult<SessionDto>>(cachekey, async (_) 
+
+        var sessions = await hybridCache.GetOrCreateAsync<PaginatedResult<SessionDto>>(cachekey, async _
             => await sessionRepository.GetAllAsync(req, ct), cancellationToken: ct);
-        
-        if (sessions.TotalCount == 0)
-        {
-            return TypedResults.BadRequest();
-        }
-        
+
+        if (sessions.TotalCount == 0) return TypedResults.BadRequest();
+
         return TypedResults.Ok(sessions);
     }
 }

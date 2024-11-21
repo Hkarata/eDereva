@@ -1,9 +1,8 @@
 ﻿using eDereva.Core.Contracts.Responses;
 
-namespace eDereva.Core.Services
+namespace eDereva.Core.Services;
+
+public interface INIDAService
 {
-    public interface INIDAService
-    {
-        Task<UserDto?> LoadUserDataAsync(string NIN);
-    }
+    Task<UserDto?> LoadUserDataAsync(string NIN);
 }

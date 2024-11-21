@@ -1,29 +1,28 @@
 ﻿using eDereva.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace eDereva.Infrastructure.Data
+namespace eDereva.Infrastructure.Data;
+
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
+    public required DbSet<Otp> Otps { get; set; }
+    public required DbSet<User> Users { get; set; }
+    public required DbSet<Role> Roles { get; set; }
+    public required DbSet<Permission> Permissions { get; set; }
+    public required DbSet<Venue> Venues { get; set; }
+    public required DbSet<Session> Sessions { get; set; }
+    public required DbSet<Contingency> Contingencies { get; set; }
+    public required DbSet<Region> Regions { get; set; }
+    public required DbSet<District> Districts { get; set; }
+    public required DbSet<VenueExemption> VenueExemptions { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        public required DbSet<Otp> Otps { get; set; }
-        public required DbSet<User> Users { get; set; }
-        public required DbSet<Role> Roles { get; set; }
-        public required DbSet<Permission> Permissions { get; set; }
-        public required DbSet<Venue> Venues { get; set; }
-        public required DbSet<Session> Sessions { get; set; }
-        public required DbSet<Contingency> Contingencies { get; set; }
-        public required DbSet<Region> Regions { get; set; }
-        public required DbSet<District> Districts { get; set; }
-        public required DbSet<VenueExemption> VenueExemptions { get; set; }
+        base.OnModelCreating(modelBuilder);
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            // Apply the composite unique constraint
-            modelBuilder.Entity<User>()
-                .HasIndex(u => new { u.FirstName, u.MiddleName, u.LastName })
-                .IsUnique();
-        }
+        // Apply the composite unique constraint
+        modelBuilder.Entity<User>()
+            .HasIndex(u => new { u.FirstName, u.MiddleName, u.LastName })
+            .IsUnique();
     }
 }

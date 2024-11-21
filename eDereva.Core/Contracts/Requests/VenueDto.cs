@@ -22,7 +22,7 @@ public static class VenueDtoExtensions
             Address = dto.Address,
             ImageUrls = dto.ImageUrls,
             Capacity = dto.Capacity,
-            DistrictId = dto.DistrictId,
+            DistrictId = dto.DistrictId
         };
     }
 }

@@ -4,6 +4,7 @@
 public enum PermissionFlag
 {
     None = 0,
+
     // User permissions
     ViewUsers = 1 << 0,
     EditUsers = 1 << 1,
@@ -15,7 +16,7 @@ public enum PermissionFlag
     EditVenues = 1 << 4,
     DeleteVenues = 1 << 5,
     ManageVenues = ViewVenues | EditVenues | DeleteVenues,
-    
+
     // Session permissions
     ViewSessions = 1 << 17,
     CreateSessions = 1 << 18,
@@ -47,5 +48,5 @@ public enum PermissionFlag
 
     // Composite permissions
     Administrator = ManageUsers | ManageVenues | ManageSessions | ManageQuestionBanks |
-                    ManageTests | ManageBookings | ViewSoftDeletedData,
+                    ManageTests | ManageBookings | ViewSoftDeletedData
 }

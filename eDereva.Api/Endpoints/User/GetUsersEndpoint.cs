@@ -1,5 +1,5 @@
 using eDereva.Core.Contracts.Responses;
-using eDereva.Core.Interfaces;
+using eDereva.Core.Repositories;
 using eDereva.Core.ValueObjects;
 using FastEndpoints;
 
@@ -17,14 +17,15 @@ public class GetUsersEndpoint(IUserRepository userRepository)
         {
             options.WithTags("User")
                 .WithSummary("Retrieves a paginated list of users")
-                .WithDescription("This endpoint retrieves a paginated list of users based on the provided pagination parameters. It supports filtering and sorting where applicable.");
+                .WithDescription(
+                    "This endpoint retrieves a paginated list of users based on the provided pagination parameters. It supports filtering and sorting where applicable.");
         });
     }
 
     public override async Task HandleAsync(PaginationParams req, CancellationToken ct)
     {
         var users = await userRepository.GetAllAsync(req, ct);
-        
+
         await SendOkAsync(users, ct);
     }
 }

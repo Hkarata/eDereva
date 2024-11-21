@@ -1,6 +1,6 @@
 using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Entities;
-using eDereva.Core.Interfaces;
+using eDereva.Core.Repositories;
 using eDereva.Core.ValueObjects;
 using eDereva.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,8 @@ namespace eDereva.Infrastructure.Repositories;
 
 public class VenueRepository(ApplicationDbContext context) : IVenueRepository
 {
-    public async Task<PaginatedResult<VenueDto>> GetVenuesPaginated(PaginationParams paginationParams, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<VenueDto>> GetVenuesPaginated(PaginationParams paginationParams,
+        CancellationToken cancellationToken)
     {
         // Ensure pagination parameters are valid, defaulting if necessary
         paginationParams.PageNumber = paginationParams.PageNumber < 1 ? 1 : paginationParams.PageNumber;
@@ -27,9 +28,9 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
 
         // Retrieve the paginated list of venues, ordered by name
         var venues = await query
-            .OrderBy(v => v.Name)  // Ensure it's ordered consistently
-            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)  // Apply paging logic
-            .Take(paginationParams.PageSize)  // Take only the required number of records
+            .OrderBy(v => v.Name) // Ensure it's ordered consistently
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize) // Apply paging logic
+            .Take(paginationParams.PageSize) // Take only the required number of records
             .Select(v => new VenueDto
             {
                 Id = v.Id,
@@ -38,9 +39,9 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
                 ImageUrls = v.ImageUrls,
                 Capacity = v.Capacity,
                 District = v.District!.Name,
-                Region = v.District!.Region!.Name,
+                Region = v.District!.Region!.Name
             })
-            .ToListAsync(cancellationToken);  // Fetch the data asynchronously
+            .ToListAsync(cancellationToken); // Fetch the data asynchronously
 
         // Return the paginated result
         return new PaginatedResult<VenueDto>(venues, totalCount, paginationParams);
@@ -53,7 +54,7 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
 
         if (venueExists)
             return false;
-        
+
         context.Venues.Add(venue);
         await context.SaveChangesAsync(cancellationToken);
         return true;
@@ -62,16 +63,16 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
     public async Task<Venue> UpdateVenue(Guid venueId, Venue updated, CancellationToken cancellationToken)
     {
         var venue = await GetVenueById(venueId, cancellationToken);
-        
+
         if (venue == null)
             return null!;
-        
+
         venue.Name = updated.Name;
         venue.Address = updated.Address;
         venue.ImageUrls = updated.ImageUrls;
         venue.Capacity = updated.Capacity;
         venue.DistrictId = updated.DistrictId;
-        
+
         await context.SaveChangesAsync(cancellationToken);
         return venue;
     }
@@ -79,7 +80,7 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
     public async Task DeleteVenue(Guid venueId, CancellationToken cancellationToken)
     {
         var venue = await GetVenueById(venueId, cancellationToken);
-        if (venue != null) 
+        if (venue != null)
             venue.IsDeleted = true;
         await context.SaveChangesAsync(cancellationToken);
     }
@@ -87,7 +88,7 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
     public async Task UnDeleteVenue(Guid venueId, CancellationToken cancellationToken)
     {
         var venue = await GetVenueById(venueId, cancellationToken);
-        if (venue != null) 
+        if (venue != null)
             venue.IsDeleted = true;
         await context.SaveChangesAsync(cancellationToken);
     }

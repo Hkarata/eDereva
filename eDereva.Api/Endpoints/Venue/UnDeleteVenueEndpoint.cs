@@ -1,4 +1,4 @@
-using eDereva.Core.Interfaces;
+using eDereva.Core.Repositories;
 using FastEndpoints;
 
 namespace eDereva.Api.Endpoints.Venue;
@@ -22,9 +22,9 @@ public class UnDeleteVenueEndpoint(IVenueRepository venueRepository) : EndpointW
     public override async Task HandleAsync(CancellationToken ct)
     {
         var venueId = Route<Guid>("venueId");
-        
+
         await venueRepository.UnDeleteVenue(venueId, ct);
-        
+
         await SendOkAsync(ct);
     }
 }

@@ -1,13 +1,16 @@
 using eDereva.Core.Contracts.Requests;
 using eDereva.Core.Enums;
-using eDereva.Core.Interfaces;
+using eDereva.Core.Repositories;
 using eDereva.Core.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eDereva.Api.Endpoints.Identity;
 
-public class AuthenticateEndpoint(IUserRepository userRepository, IRoleRepository roleRepository, ITokenService tokenService) 
+public class AuthenticateEndpoint(
+    IUserRepository userRepository,
+    IRoleRepository roleRepository,
+    ITokenService tokenService)
     : Endpoint<AuthenticateDto, Results<Ok<string>, BadRequest>>
 {
     public override void Configure()
@@ -19,7 +22,8 @@ public class AuthenticateEndpoint(IUserRepository userRepository, IRoleRepositor
         {
             options.WithTags("Authentication")
                 .WithSummary("Authenticate User")
-                .WithDescription("Authenticates a user by their credentials and returns a JWT token for accessing secured endpoints.");
+                .WithDescription(
+                    "Authenticates a user by their credentials and returns a JWT token for accessing secured endpoints.");
         });
     }
 
@@ -28,23 +32,16 @@ public class AuthenticateEndpoint(IUserRepository userRepository, IRoleRepositor
         var authenticationResults = await userRepository
             .AuthenticateAsync(req.PhoneNumber, req.Password, ct);
 
-        if (authenticationResults.IsAuthenticated == false)
-        {
-            return TypedResults.BadRequest();   
-        }
+        if (authenticationResults.IsAuthenticated == false) return TypedResults.BadRequest();
 
         PermissionFlag permissionFlag;
 
         if (req.IsDriver)
-        {
             permissionFlag = await roleRepository.GetBasicRolePermissionFlag();
-        }
         else
-        {
             permissionFlag = await userRepository.GetAggregatePermissionFlag(req.PhoneNumber, ct);
-        }
 
-        var token = tokenService.GenerateToken(authenticationResults.Message! ,permissionFlag);
+        var token = tokenService.GenerateToken(authenticationResults.Message!, permissionFlag);
 
 
         return TypedResults.Ok(token);

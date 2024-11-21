@@ -8,16 +8,15 @@ using Microsoft.Extensions.Logging;
 
 namespace eDereva.Infrastructure.Services;
 
-public class VenueExemptionService
-    (
-        ApplicationDbContext context,
-        ILogger<VenueExemptionService> logger
-    ) : IVenueExemptionService
+public class VenueExemptionService(
+    ApplicationDbContext context,
+    ILogger<VenueExemptionService> logger
+) : IVenueExemptionService
 {
     public async Task Exempt(ExemptVenueDto venue, CancellationToken cancellationToken)
     {
         logger.LogInformation("Creating venue exemption for venue {VenueId}", venue.VenueId);
-        
+
         try
         {
             var venueExemption = new VenueExemption
@@ -25,10 +24,10 @@ public class VenueExemptionService
                 VenueId = venue.VenueId,
                 ExemptionDate = DateTime.Now
             };
-            
+
             context.VenueExemptions.Add(venueExemption);
             await context.SaveChangesAsync(cancellationToken);
-            
+
             logger.LogInformation("Successfully created venue exemption for venue {VenueId}", venue.VenueId);
         }
         catch (Exception ex)
@@ -41,11 +40,11 @@ public class VenueExemptionService
     public async Task ApproveExemption(Guid venueId, CancellationToken cancellationToken)
     {
         logger.LogInformation("Approving exemption for venue {VenueId}", venueId);
-        
+
         try
         {
             var venueExemption = await context.VenueExemptions
-                .SingleOrDefaultAsync(x => x.VenueId == venueId, cancellationToken: cancellationToken);
+                .SingleOrDefaultAsync(x => x.VenueId == venueId, cancellationToken);
 
             if (venueExemption == null)
             {
@@ -55,7 +54,7 @@ public class VenueExemptionService
 
             venueExemption.HasBeenApproved = true;
             await context.SaveChangesAsync(cancellationToken);
-            
+
             logger.LogInformation("Successfully approved exemption for venue {VenueId}", venueId);
         }
         catch (Exception ex)
@@ -65,18 +64,19 @@ public class VenueExemptionService
         }
     }
 
-    public async Task<List<Guid>> GetExemptedVenuesInDateRange(DateTime startDate, DateTime endDate, CancellationToken cancellationToken)
+    public async Task<List<Guid>> GetExemptedVenuesInDateRange(DateTime startDate, DateTime endDate,
+        CancellationToken cancellationToken)
     {
         logger.LogInformation("Retrieving exempted venues between {StartDate} and {EndDate}", startDate, endDate);
-        
+
         try
         {
             var venueIds = await context.VenueExemptions
                 .AsNoTracking()
                 .AsSplitQuery()
                 .Where(v => v.ExemptionDate >= startDate &&
-                           v.ExemptionDate <= endDate &&
-                           v.HasBeenApproved)
+                            v.ExemptionDate <= endDate &&
+                            v.HasBeenApproved)
                 .Select(v => v.VenueId)
                 .ToListAsync(cancellationToken);
 
@@ -85,7 +85,8 @@ public class VenueExemptionService
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to retrieve exempted venues between {StartDate} and {EndDate}", startDate, endDate);
+            logger.LogError(ex, "Failed to retrieve exempted venues between {StartDate} and {EndDate}", startDate,
+                endDate);
             throw;
         }
     }
@@ -95,11 +96,11 @@ public class VenueExemptionService
         CancellationToken cancellationToken)
     {
         logger.LogInformation(
-            "Retrieving new exemption requests for page {PageNumber}, size {PageSize}", 
-            paginationParams.PageNumber, 
+            "Retrieving new exemption requests for page {PageNumber}, size {PageSize}",
+            paginationParams.PageNumber,
             paginationParams.PageSize
         );
-        
+
         try
         {
             var query = context.VenueExemptions
@@ -108,7 +109,7 @@ public class VenueExemptionService
                 .AsQueryable();
 
             var totalCount = await query.CountAsync(cancellationToken);
-            
+
             logger.LogDebug("Total count of unprocessed exemption requests: {TotalCount}", totalCount);
 
             var items = await query
@@ -123,29 +124,30 @@ public class VenueExemptionService
                 .ToListAsync(cancellationToken);
 
             var result = new PaginatedResult<ExemptVenueDto>(items, totalCount, paginationParams);
-            
+
             logger.LogInformation(
-                "Retrieved {ItemCount} exemption requests (page {PageNumber} of {TotalPages})", 
+                "Retrieved {ItemCount} exemption requests (page {PageNumber} of {TotalPages})",
                 items.Count,
                 paginationParams.PageNumber,
                 result.TotalPages
             );
-            
+
             return result;
         }
         catch (Exception ex)
         {
             logger.LogError(
                 ex,
-                "Failed to retrieve exemption requests for page {PageNumber}, size {PageSize}", 
-                paginationParams.PageNumber, 
+                "Failed to retrieve exemption requests for page {PageNumber}, size {PageSize}",
+                paginationParams.PageNumber,
                 paginationParams.PageSize
             );
             throw;
         }
     }
 
-    public async Task<bool> IsVenueExemptedForDate(Guid pairVenueId, DateTime pairDate, CancellationToken cancellationToken)
+    public async Task<bool> IsVenueExemptedForDate(Guid pairVenueId, DateTime pairDate,
+        CancellationToken cancellationToken)
     {
         return await context.VenueExemptions
             .AsNoTracking()

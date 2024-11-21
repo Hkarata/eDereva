@@ -8,13 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
-      <PackageReference Include="TUnit" Version="0.2.212" />
+        <PackageReference Include="System.Formats.Asn1" Version="9.0.0"/>
+        <PackageReference Include="TUnit" Version="0.2.212"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\eDereva.Api\eDereva.Api.csproj" />
-      <ProjectReference Include="..\eDereva.Core\eDereva.Core.csproj" />
+        <ProjectReference Include="..\eDereva.Api\eDereva.Api.csproj"/>
+        <ProjectReference Include="..\eDereva.Core\eDereva.Core.csproj"/>
     </ItemGroup>
 
 </Project>

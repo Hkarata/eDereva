@@ -1,8 +1,7 @@
-﻿namespace eDereva.Core.Enums
+﻿namespace eDereva.Core.Enums;
+
+public enum Sex
 {
-    public enum Sex
-    {
-        Male,
-        Female
-    }
+    Male,
+    Female
 }

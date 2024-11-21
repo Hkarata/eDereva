@@ -1,5 +1,5 @@
 using eDereva.Core.Contracts.Requests;
-using eDereva.Core.Interfaces;
+using eDereva.Core.Repositories;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -17,7 +17,8 @@ public class CreateVenueEndpoint(IVenueRepository venueRepository, ILogger<Creat
         {
             options.WithTags("Venue")
                 .WithSummary("Creates a new venue")
-                .WithDescription("This endpoint allows users to create a new venue by providing its name and other optional details such as the venue's location, capacity, and facilities. The venue name is required, while other details are optional and can be provided based on the user's needs. Upon successful creation, the new venue will be stored in the system, and the user will receive a confirmation response with the venue's unique ID and the details that were submitted. This endpoint is ideal for administrators or venue managers who wish to register a new venue in the system.");
+                .WithDescription(
+                    "This endpoint allows users to create a new venue by providing its name and other optional details such as the venue's location, capacity, and facilities. The venue name is required, while other details are optional and can be provided based on the user's needs. Upon successful creation, the new venue will be stored in the system, and the user will receive a confirmation response with the venue's unique ID and the details that were submitted. This endpoint is ideal for administrators or venue managers who wish to register a new venue in the system.");
         });
     }
 

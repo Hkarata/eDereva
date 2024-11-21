@@ -21,7 +21,7 @@ Content-Type: application/json
 {
   "name": "Super user",
   "description": "Full system administrator with all permissions",
-  "permissions": 8191  
+  "permissions": 8191
 }
 
 

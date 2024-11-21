@@ -1,10 +1,11 @@
 using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Entities;
-using eDereva.Core.Interfaces;
+using eDereva.Core.Repositories;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eDereva.Api.Endpoints.Venue;
+
 public class GetVenueEndpoint(IVenueRepository venueRepository)
     : EndpointWithoutRequest<Results<Ok<VenueDto>, BadRequest>>
 {
@@ -27,11 +28,8 @@ public class GetVenueEndpoint(IVenueRepository venueRepository)
 
         var venue = await venueRepository.GetVenueById(venueId, ct);
 
-        if (venue is null)
-        {
-            return TypedResults.BadRequest();
-        }
-        
+        if (venue is null) return TypedResults.BadRequest();
+
         return TypedResults.Ok(venue.MapToVenueDto());
     }
 }

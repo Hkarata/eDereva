@@ -1,7 +1,6 @@
-﻿namespace eDereva.Core.ValueObjects
+﻿namespace eDereva.Core.ValueObjects;
+
+public class ApiSettings
 {
-    public class ApiSettings
-    {
-        public string ApiKey { get; set; } = string.Empty;
-    }
+    public string ApiKey { get; set; } = string.Empty;
 }

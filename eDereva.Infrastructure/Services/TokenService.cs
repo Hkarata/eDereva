@@ -6,47 +6,53 @@ using eDereva.Core.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace eDereva.Infrastructure.Services
+namespace eDereva.Infrastructure.Services;
+
+public class TokenService(IConfiguration configuration) : ITokenService
 {
-    public class TokenService(IConfiguration configuration) : ITokenService
+    private readonly string _audience = configuration["Jwt:Audience"] ??
+                                        throw new ArgumentNullException(nameof(configuration),
+                                            "Audience cannot be null");
+
+    private readonly string _issuer = configuration["Jwt:Issuer"] ??
+                                      throw new ArgumentNullException(nameof(configuration), "Issuer cannot be null");
+
+    private readonly string _secretKey = configuration["Jwt:SecretKey"] ??
+                                         throw new ArgumentNullException(nameof(configuration),
+                                             "SecretKey cannot be null");
+
+    public string GenerateToken(string username, PermissionFlag permissions)
     {
-        private readonly string _secretKey = configuration["Jwt:SecretKey"] ?? throw new ArgumentNullException(nameof(configuration), "SecretKey cannot be null");
-        private readonly string _issuer = configuration["Jwt:Issuer"] ?? throw new ArgumentNullException(nameof(configuration), "Issuer cannot be null");
-        private readonly string _audience = configuration["Jwt:Audience"] ?? throw new ArgumentNullException(nameof(configuration), "Audience cannot be null");
+        if (string.IsNullOrEmpty(username))
+            throw new ArgumentException("Username cannot be null or empty", nameof(username));
 
-        public string GenerateToken(string username, PermissionFlag permissions)
-        {   
-            if (string.IsNullOrEmpty(username))
-                throw new ArgumentException("Username cannot be null or empty", nameof(username));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.Name, username)
-            };
-
-            claims.AddRange(Enum.GetValues<PermissionFlag>()
-                .Where(permission => permissions.HasFlag(permission) && permission != PermissionFlag.None)
-                .Select(permission => new Claim("Permission", permission.ToString())));
-
-            var token = new JwtSecurityToken(
-                issuer: _issuer,
-                audience: _audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30), // Using UTC time
-                signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        public bool IsTokenCloseToExpiring(JwtSecurityToken token)
+        var claims = new List<Claim>
         {
-            ArgumentNullException.ThrowIfNull(token);
+            new(ClaimTypes.Name, username)
+        };
 
-            var timeToExpire = token.ValidTo - DateTime.UtcNow;
-            return timeToExpire < TimeSpan.FromMinutes(5);
-        }
+        claims.AddRange(Enum.GetValues<PermissionFlag>()
+            .Where(permission => permissions.HasFlag(permission) && permission != PermissionFlag.None)
+            .Select(permission => new Claim("Permission", permission.ToString())));
+
+        var token = new JwtSecurityToken(
+            _issuer,
+            _audience,
+            claims,
+            expires: DateTime.UtcNow.AddMinutes(30), // Using UTC time
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public bool IsTokenCloseToExpiring(JwtSecurityToken token)
+    {
+        ArgumentNullException.ThrowIfNull(token);
+
+        var timeToExpire = token.ValidTo - DateTime.UtcNow;
+        return timeToExpire < TimeSpan.FromMinutes(5);
     }
 }

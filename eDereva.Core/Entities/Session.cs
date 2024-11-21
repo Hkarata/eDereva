@@ -11,13 +11,13 @@ public class Session : ISoftDelete, IAudit
     public TimeOnly StartTime { get; set; }
     public TimeOnly EndTime { get; set; }
     public int Capacity { get; set; }
-    public bool IsDeleted { get; set; }
-    public DateTime CreatedAt { get; } = DateTime.UtcNow;
-    public DateTime? ModifiedAt { get; set; }
-    
+
     // Navigation properties
     public Guid VenueId { get; set; }
     public Venue? Venue { get; set; }
     public Guid? ContingencyId { get; set; }
     public Contingency? Contingency { get; set; }
+    public DateTime CreatedAt { get; } = DateTime.UtcNow;
+    public DateTime? ModifiedAt { get; set; }
+    public bool IsDeleted { get; set; }
 }

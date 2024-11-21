@@ -2,8 +2,8 @@ using System.Text;
 using eDereva.Api.Exceptions;
 using eDereva.Api.Extensions;
 using eDereva.Api.Identity;
-using eDereva.Core.Interfaces;
 using eDereva.Core.Jobs;
+using eDereva.Core.Repositories;
 using eDereva.Core.Services;
 using eDereva.Core.ValueObjects;
 using eDereva.Infrastructure.Data;
@@ -26,11 +26,11 @@ var configuration = builder.Configuration;
 // Add services to the container.
 
 builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -112,18 +112,15 @@ builder.Services.AddOpenApi(options =>
     options.AddDocumentTransformer<ApiKeySecuritySchemeTransformer>();
 });
 
-builder.Services.AddHangfire(config => 
-        config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+builder.Services.AddHangfire(config =>
+    config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
         .UseSimpleAssemblyNameTypeSerializer()
         .UseRecommendedSerializerSettings()
         .UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"))
         .UseDashboardMetrics()
-    );
+);
 
-builder.Services.AddHangfireServer(options =>
-{
-    options.SchedulePollingInterval = TimeSpan.FromSeconds(15);
-});
+builder.Services.AddHangfireServer(options => { options.SchedulePollingInterval = TimeSpan.FromSeconds(15); });
 
 
 var app = builder.Build();
@@ -150,10 +147,7 @@ app.MapScalarApiReference(options =>
     options.Title = "eDereva API";
     options.Theme = ScalarTheme.Saturn;
     options.WithPreferredScheme("Bearer");
-    options.WithApiKeyAuthentication(keyOptions =>
-    {
-        keyOptions.Token = "Token";
-    });
+    options.WithApiKeyAuthentication(keyOptions => { keyOptions.Token = "Token"; });
     options.AddServer(new ScalarServer
     (
         "http://4.221.77.82",

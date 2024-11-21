@@ -8,14 +8,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Azure.Identity" Version="1.13.1" />
-      <PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
-      <PackageReference Include="TUnit" Version="0.2.212" />
+        <PackageReference Include="Azure.Identity" Version="1.13.1"/>
+        <PackageReference Include="System.Formats.Asn1" Version="9.0.0"/>
+        <PackageReference Include="TUnit" Version="0.2.212"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\eDereva.Infrastructure\eDereva.Infrastructure.csproj" />
-      <ProjectReference Include="..\eDereva.UnitTests\eDereva.UnitTests.csproj" />
+        <ProjectReference Include="..\eDereva.Infrastructure\eDereva.Infrastructure.csproj"/>
+        <ProjectReference Include="..\eDereva.UnitTests\eDereva.UnitTests.csproj"/>
     </ItemGroup>
 
 </Project>

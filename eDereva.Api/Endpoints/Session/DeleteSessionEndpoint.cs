@@ -1,9 +1,9 @@
-using eDereva.Core.Interfaces;
+using eDereva.Core.Repositories;
 using FastEndpoints;
 
 namespace eDereva.Api.Endpoints.Session;
 
-public class DeleteSessionEndpoint (ISessionRepository sessionRepository)
+public class DeleteSessionEndpoint(ISessionRepository sessionRepository)
     : EndpointWithoutRequest
 {
     public override void Configure()

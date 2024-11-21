@@ -1,6 +1,6 @@
 using eDereva.Core.Contracts.Requests;
 using eDereva.Core.Entities;
-using eDereva.Core.Interfaces;
+using eDereva.Core.Repositories;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using VenueDto = eDereva.Core.Contracts.Responses.VenueDto;
@@ -23,12 +23,13 @@ public class UpdateVenueEndpoint(IVenueRepository venueRepository)
         });
     }
 
-    public override async Task<Results<Ok<VenueDto>, BadRequest>> ExecuteAsync(Core.Contracts.Requests.VenueDto req, CancellationToken ct)
+    public override async Task<Results<Ok<VenueDto>, BadRequest>> ExecuteAsync(Core.Contracts.Requests.VenueDto req,
+        CancellationToken ct)
     {
         var venueId = Route<Guid>("venueId");
-        
-        var updatedVenue = await venueRepository.UpdateVenue(venueId,req.MapToVenue(), ct);
-        
+
+        var updatedVenue = await venueRepository.UpdateVenue(venueId, req.MapToVenue(), ct);
+
         return TypedResults.Ok(updatedVenue.MapToVenueDto());
     }
 }

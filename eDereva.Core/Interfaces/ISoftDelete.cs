@@ -1,7 +1,6 @@
-﻿namespace eDereva.Core.Interfaces
+﻿namespace eDereva.Core.Interfaces;
+
+internal interface ISoftDelete
 {
-    internal interface ISoftDelete
-    {
-        public bool IsDeleted { get; set; }
-    }
+    public bool IsDeleted { get; set; }
 }

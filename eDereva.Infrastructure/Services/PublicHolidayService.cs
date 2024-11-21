@@ -12,24 +12,25 @@ public interface IPublicHolidayService
 
 public class PublicHolidayService : IPublicHolidayService
 {
-    private readonly ILogger<PublicHolidayService> _logger;
-    
-    private static readonly IReadOnlyList<(int Month, int Day, string Name)> FixedHolidays = new List<(int Month, int Day, string Name)>
-    {
-        (1, 1, "New Year's Day"),
-        (4, 7, "Good Friday"),
-        (4, 9, "Easter Monday"),
-        (5, 1, "Labour Day"),
-        (7, 7, "Saba Saba (Industry Day)"),
-        (8, 8, "Nane Nane (Farmers' Day)"),
-        (10, 14, "Independence Day"),
-        (12, 9, "Uhuru Day"),
-        (12, 25, "Christmas Day"),
-        (12, 26, "Boxing Day")
-    };
+    private static readonly IReadOnlyList<(int Month, int Day, string Name)> FixedHolidays =
+        new List<(int Month, int Day, string Name)>
+        {
+            (1, 1, "New Year's Day"),
+            (4, 7, "Good Friday"),
+            (4, 9, "Easter Monday"),
+            (5, 1, "Labour Day"),
+            (7, 7, "Saba Saba (Industry Day)"),
+            (8, 8, "Nane Nane (Farmers' Day)"),
+            (10, 14, "Independence Day"),
+            (12, 9, "Uhuru Day"),
+            (12, 25, "Christmas Day"),
+            (12, 26, "Boxing Day")
+        };
+
+    private readonly GregorianCalendar _gregorianCalendar = new();
 
     private readonly HijriCalendar _hijriCalendar = new();
-    private readonly GregorianCalendar _gregorianCalendar = new();
+    private readonly ILogger<PublicHolidayService> _logger;
 
     public PublicHolidayService(ILogger<PublicHolidayService> logger)
     {
@@ -37,7 +38,7 @@ public class PublicHolidayService : IPublicHolidayService
     }
 
     /// <summary>
-    /// Get all public holidays within a given date range.
+    ///     Get all public holidays within a given date range.
     /// </summary>
     /// <param name="startDate">Start date of the range</param>
     /// <param name="endDate">End date of the range</param>
@@ -48,7 +49,8 @@ public class PublicHolidayService : IPublicHolidayService
 
         if (startDate > endDate)
         {
-            _logger.LogError("Invalid date range: Start date {StartDate} is after end date {EndDate}", startDate, endDate);
+            _logger.LogError("Invalid date range: Start date {StartDate} is after end date {EndDate}", startDate,
+                endDate);
             throw new ArgumentException("Start date must be before or equal to end date");
         }
 
@@ -57,7 +59,6 @@ public class PublicHolidayService : IPublicHolidayService
         // Add fixed holidays
         _logger.LogDebug("Processing fixed holidays for year {Year}", startDate.Year);
         foreach (var (month, day, name) in FixedHolidays)
-        {
             try
             {
                 var holidayDate = new DateTime(startDate.Year, month, day);
@@ -67,10 +68,9 @@ public class PublicHolidayService : IPublicHolidayService
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                _logger.LogError(ex, "Invalid date for fixed holiday {HolidayName} ({Month}/{Day}/{Year})", 
+                _logger.LogError(ex, "Invalid date for fixed holiday {HolidayName} ({Month}/{Day}/{Year})",
                     name, month, day, startDate.Year);
             }
-        }
 
         // Add Islamic holidays
         try
@@ -97,22 +97,22 @@ public class PublicHolidayService : IPublicHolidayService
 
         var orderedHolidays = holidays.OrderBy(h => h.Date).ToList();
         _logger.LogInformation("Found {Count} holidays in specified date range", orderedHolidays.Count);
-        
+
         return orderedHolidays;
     }
 
     /// <summary>
-    /// Get all public holidays for the next N days from today.
+    ///     Get all public holidays for the next N days from today.
     /// </summary>
     /// <param name="days">Number of days to look ahead</param>
     /// <returns>List of holiday dates with their names</returns>
     public IEnumerable<(DateTime Date, string Name)> GetUpcomingHolidays(int days = 30)
     {
         _logger.LogInformation("Retrieving upcoming holidays for next {Days} days", days);
-        
+
         var startDate = DateTime.Today;
         var endDate = startDate.AddDays(days);
-        
+
         return GetPublicHolidays(startDate, endDate);
     }
 
@@ -128,8 +128,8 @@ public class PublicHolidayService : IPublicHolidayService
             if (year > _hijriCalendar.MaxSupportedDateTime.Year)
             {
                 _logger.LogWarning(
-                    "Requested year {Year} exceeds maximum supported Hijri year {MaxYear}. Using max supported date.", 
-                    year, 
+                    "Requested year {Year} exceeds maximum supported Hijri year {MaxYear}. Using max supported date.",
+                    year,
                     _hijriCalendar.MaxSupportedDateTime.Year
                 );
                 hijriDate = _hijriCalendar.MaxSupportedDateTime;
@@ -143,8 +143,8 @@ public class PublicHolidayService : IPublicHolidayService
             );
 
             _logger.LogDebug(
-                "Converted Hijri date {HijriDate} to Gregorian date {GregorianDate}", 
-                $"{year}/{month}/{day}", 
+                "Converted Hijri date {HijriDate} to Gregorian date {GregorianDate}",
+                $"{year}/{month}/{day}",
                 gregorianDate.ToString("yyyy/MM/dd")
             );
 

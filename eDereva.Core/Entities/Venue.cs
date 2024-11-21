@@ -6,20 +6,20 @@ namespace eDereva.Core.Entities;
 public class Venue : IAudit
 {
     public Guid Id { get; set; }
-    
+
     public string Name { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
     public List<string>? ImageUrls { get; set; }
     public int Capacity { get; set; }
     public bool IsDeleted { get; set; }
-    public DateTime CreatedAt { get; } = DateTime.UtcNow; // Set at creation
-    public DateTime? ModifiedAt { get; set; }
-    
+
     // Navigation properties
     public Guid DistrictId { get; set; }
     public District? District { get; set; }
     public ICollection<Session>? Sessions { get; set; }
     public ICollection<Contingency>? Contingencies { get; set; }
+    public DateTime CreatedAt { get; } = DateTime.UtcNow; // Set at creation
+    public DateTime? ModifiedAt { get; set; }
 
     public void UpdateEntity()
     {
@@ -39,7 +39,7 @@ public static class VenueExtensions
             ImageUrls = venue.ImageUrls,
             Capacity = venue.Capacity,
             District = venue.District!.Name,
-            Region = venue.District.Region!.Name!,
+            Region = venue.District.Region!.Name!
         };
     }
 }
