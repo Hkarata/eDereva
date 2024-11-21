@@ -15,6 +15,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<Region> Regions { get; set; }
     public required DbSet<District> Districts { get; set; }
     public required DbSet<VenueExemption> VenueExemptions { get; set; }
+    public required DbSet<QuestionBank> QuestionBanks { get; set; }
+    public required DbSet<Question> Questions { get; set; }
+    public required DbSet<Choice> Choices { get; set; }
+    public required DbSet<Answer> Answers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
