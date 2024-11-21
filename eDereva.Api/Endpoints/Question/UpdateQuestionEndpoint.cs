@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eDereva.Api.Endpoints.Question;
 
-public class UpdateQuestionEndpoint (IQuestionBankRepository questionBankRepository)
+public class UpdateQuestionEndpoint(IQuestionBankRepository questionBankRepository)
     : Endpoint<QuestionDto, Results<Ok, BadRequest<string>>>
 {
     public override void Configure()
@@ -26,9 +26,9 @@ public class UpdateQuestionEndpoint (IQuestionBankRepository questionBankReposit
     public override async Task HandleAsync(QuestionDto req, CancellationToken ct)
     {
         var questionId = Route<Guid>("questionId");
-        
+
         var results = req.MapToQuestion(questionId);
-        
+
         await questionBankRepository.UpdateAsync(results.question, ct);
 
         var answer = new Answer

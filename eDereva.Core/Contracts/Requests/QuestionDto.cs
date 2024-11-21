@@ -12,7 +12,8 @@ public class QuestionDto
 
 public static class QuestionExtensions
 {
-    public static (Question question, Guid questionId, Guid choiceId) MapToQuestion(this QuestionDto dto, Guid questionId = default)
+    public static (Question question, Guid questionId, Guid choiceId) MapToQuestion(this QuestionDto dto,
+        Guid questionId = default)
     {
         var question = new Question
         {
@@ -26,17 +27,14 @@ public static class QuestionExtensions
                 Text = choiceDto.Text
             }).ToList()
         };
-        
+
         var correctChoiceId = question.Choices!
             .Where(choice => choice.Text == dto.Choices?.FirstOrDefault(c => c.IsCorrect)?.Text)
             .Select(choice => choice.Id)
             .FirstOrDefault();
 
-        foreach (var choice in question.Choices!)
-        {
-            choice.QuestionId = question.Id;
-        }
-        
+        foreach (var choice in question.Choices!) choice.QuestionId = question.Id;
+
         return (question, question.Id, correctChoiceId!);
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eDereva.Api.Endpoints.QuestionBank;
 
-public class UpdateQuestionBankEndpoint (IQuestionBankRepository questionBankRepository)
+public class UpdateQuestionBankEndpoint(IQuestionBankRepository questionBankRepository)
     : Endpoint<QuestionBankDto, Results<Ok, BadRequest>>
 {
     public override void Configure()
@@ -33,7 +33,7 @@ public class UpdateQuestionBankEndpoint (IQuestionBankRepository questionBankRep
             Name = req.Name,
             Description = req.Description
         };
-        
+
         await questionBankRepository.UpdateQuestionBankAsync(questionBank, ct);
 
         await SendOkAsync(ct);

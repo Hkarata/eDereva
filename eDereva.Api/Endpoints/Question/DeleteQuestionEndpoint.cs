@@ -3,7 +3,9 @@ using FastEndpoints;
 
 namespace eDereva.Api.Endpoints.Question;
 
-public class DeleteQuestionEndpoint (IQuestionBankRepository questionBankRepository, ILogger<DeleteQuestionEndpoint> logger) 
+public class DeleteQuestionEndpoint(
+    IQuestionBankRepository questionBankRepository,
+    ILogger<DeleteQuestionEndpoint> logger)
     : EndpointWithoutRequest
 {
     public override void Configure()
@@ -22,7 +24,7 @@ public class DeleteQuestionEndpoint (IQuestionBankRepository questionBankReposit
     public override async Task HandleAsync(CancellationToken ct)
     {
         var questionId = Route<Guid>("questionId");
-        
+
         logger.LogInformation("Deleting question with Id: {QuestionId}", questionId);
 
         await questionBankRepository.DeleteAsync(questionId, ct);

@@ -1,5 +1,3 @@
-using eDereva.Core.Entities;
-
 namespace eDereva.Core.Contracts.Responses;
 
 public class QuestionBankDto

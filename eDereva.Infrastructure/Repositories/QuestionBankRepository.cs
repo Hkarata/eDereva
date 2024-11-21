@@ -8,13 +8,13 @@ using Microsoft.Extensions.Logging;
 
 namespace eDereva.Infrastructure.Repositories;
 
-public class QuestionBankRepository(ApplicationDbContext context, ILogger<QuestionBankRepository> logger) 
+public class QuestionBankRepository(ApplicationDbContext context, ILogger<QuestionBankRepository> logger)
     : IQuestionBankRepository
 {
     public async ValueTask<QuestionDto?> GetByIdAsync(Guid questionId, CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting question by ID: {QuestionId}", questionId);
-        
+
         var question = await context.Questions
             .AsSplitQuery()
             .Include(q => q.Choices)
@@ -31,20 +31,18 @@ public class QuestionBankRepository(ApplicationDbContext context, ILogger<Questi
                     Text = c.Text
                 }).ToList()
             })
-            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
-        
-        if (question == null)
-        {
-            logger.LogWarning("Question with ID {QuestionId} not found", questionId);
-        }
-        
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (question == null) logger.LogWarning("Question with ID {QuestionId} not found", questionId);
+
         return question;
     }
 
-    public async ValueTask<PaginatedResult<QuestionDto>> GetAllAsync(Guid questionBankId, PaginationParams paginationParams, CancellationToken cancellationToken)
+    public async ValueTask<PaginatedResult<QuestionDto>> GetAllAsync(Guid questionBankId,
+        PaginationParams paginationParams, CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting all questions with pagination: {PaginationParams}", paginationParams);
-        
+
         var query = context.Questions
             .AsNoTracking()
             .AsSplitQuery()
@@ -103,6 +101,7 @@ public class QuestionBankRepository(ApplicationDbContext context, ILogger<Questi
         {
             logger.LogWarning("Attempted to delete non-existent question with ID: {QuestionId}", questionId);
         }
+
         await context.SaveChangesAsync(cancellationToken);
     }
 
@@ -113,10 +112,10 @@ public class QuestionBankRepository(ApplicationDbContext context, ILogger<Questi
             QuestionId = questionId,
             ChoiceId = choiceId
         };
-        
+
         logger.LogInformation("Adding new answer: {Answer}", answer);
         context.Answers.Add(answer);
-        await context.SaveChangesAsync(cancellationToken); 
+        await context.SaveChangesAsync(cancellationToken);
         logger.LogInformation("Answer added successfully: {Answer}", answer);
     }
 
@@ -132,7 +131,7 @@ public class QuestionBankRepository(ApplicationDbContext context, ILogger<Questi
     {
         logger.LogInformation("Adding new question bank: {QuestionBank}", questionBank);
         context.QuestionBanks.Add(questionBank);
-        await context.SaveChangesAsync(cancellationToken); 
+        await context.SaveChangesAsync(cancellationToken);
         logger.LogInformation("Question bank added successfully: {QuestionBank}", questionBank);
     }
 
@@ -140,11 +139,12 @@ public class QuestionBankRepository(ApplicationDbContext context, ILogger<Questi
     {
         logger.LogInformation("Updating question bank: {QuestionBank}", questionBank);
         context.QuestionBanks.Update(questionBank);
-        await context.SaveChangesAsync(cancellationToken); 
+        await context.SaveChangesAsync(cancellationToken);
         logger.LogInformation("Question bank updated successfully: {QuestionBank}", questionBank);
     }
 
-    public async Task<QuestionBankDto?> GetQuestionBankByIdAsync(Guid questionBankId, CancellationToken cancellationToken)
+    public async Task<QuestionBankDto?> GetQuestionBankByIdAsync(Guid questionBankId,
+        CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting question bank by ID: {QuestionBankId}", questionBankId);
         var questionBank = await context.QuestionBanks
@@ -163,21 +163,22 @@ public class QuestionBankRepository(ApplicationDbContext context, ILogger<Questi
 
         if (questionBank != null)
             return questionBank;
-        
+
         logger.LogWarning("QuestionBank with ID {QuestionBankId} not found", questionBankId);
         return null;
     }
 
-    public async Task<PaginatedResult<QuestionBankDto>> GetQuestionBanks(PaginationParams paginationParams, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<QuestionBankDto>> GetQuestionBanks(PaginationParams paginationParams,
+        CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting all question banks with pagination: {PaginationParams}", paginationParams);
         var query = context.QuestionBanks
             .AsNoTracking()
             .AsSplitQuery()
             .Include(qb => qb.Questions);
-    
+
         var totalItems = await query.CountAsync(cancellationToken);
-        
+
         var items = await query
             .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
             .Take(paginationParams.PageSize)

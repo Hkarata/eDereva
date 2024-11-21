@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eDereva.Api.Endpoints.Question;
 
-public class GetQuestionEndpoint (IQuestionBankRepository questionBankRepository, ILogger<GetQuestionEndpoint> logger) 
+public class GetQuestionEndpoint(IQuestionBankRepository questionBankRepository, ILogger<GetQuestionEndpoint> logger)
     : EndpointWithoutRequest<Results<Ok<QuestionDto>, BadRequest<string>>>
 {
     public override void Configure()
@@ -27,9 +27,9 @@ public class GetQuestionEndpoint (IQuestionBankRepository questionBankRepository
     {
         var questionId = Route<Guid>("questionId");
         logger.LogInformation("Received request to get question with ID: {QuestionId}", questionId);
-        
+
         var question = await questionBankRepository.GetByIdAsync(questionId, ct);
-        
+
         if (question is null)
         {
             logger.LogWarning("Question with ID: {QuestionId} not found", questionId);

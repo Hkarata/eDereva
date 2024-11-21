@@ -25,13 +25,10 @@ public class GetQuestionBankEndpoint(IQuestionBankRepository questionBankReposit
     public override async Task<Results<Ok<QuestionBankDto>, BadRequest<string>>> ExecuteAsync(CancellationToken ct)
     {
         var questionBankId = Route<Guid>("questionBankId");
-        
+
         var questionBank = await questionBankRepository.GetQuestionBankByIdAsync(questionBankId, ct);
 
-        if (questionBank is null)
-        {
-            return TypedResults.BadRequest("Question bank not found");
-        }
+        if (questionBank is null) return TypedResults.BadRequest("Question bank not found");
 
         return TypedResults.Ok(questionBank);
     }

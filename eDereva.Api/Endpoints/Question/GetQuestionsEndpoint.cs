@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eDereva.Api.Endpoints.Question;
 
-public class GetQuestionsEndpoint (IQuestionBankRepository questionBankRepository)
+public class GetQuestionsEndpoint(IQuestionBankRepository questionBankRepository)
     : Endpoint<PaginationParams, Results<Ok<PaginatedResult<QuestionDto>>, BadRequest<string>>>
 {
     public override void Configure()
@@ -23,16 +23,14 @@ public class GetQuestionsEndpoint (IQuestionBankRepository questionBankRepositor
         });
     }
 
-    public override async Task<Results<Ok<PaginatedResult<QuestionDto>>, BadRequest<string>>> ExecuteAsync(PaginationParams req, CancellationToken ct)
+    public override async Task<Results<Ok<PaginatedResult<QuestionDto>>, BadRequest<string>>> ExecuteAsync(
+        PaginationParams req, CancellationToken ct)
     {
         var questionBankId = Route<Guid>("questionBankId");
         var questions = await questionBankRepository.GetAllAsync(questionBankId, req, ct);
 
-        if (questions.TotalCount == 0)
-        {
-            return TypedResults.BadRequest("No questions found");
-        }
-        
+        if (questions.TotalCount == 0) return TypedResults.BadRequest("No questions found");
+
         return TypedResults.Ok(questions);
     }
 }
