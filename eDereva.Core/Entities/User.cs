@@ -68,6 +68,8 @@ public class User
     ///     Gets or sets the roles associated with the user.
     /// </summary>
     public ICollection<Role>? Roles { get; set; }
+
+    public ICollection<Booking>? Bookings { get; set; }
 }
 
 /// <summary>

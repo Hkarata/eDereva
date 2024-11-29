@@ -17,6 +17,7 @@ public class Session : ISoftDelete, IAudit
     public Venue? Venue { get; set; }
     public Guid? ContingencyId { get; set; }
     public Contingency? Contingency { get; set; }
+    public ICollection<Booking>? Bookings { get; set; }
     public DateTime CreatedAt { get; } = DateTime.UtcNow;
     public DateTime? ModifiedAt { get; set; }
     public bool IsDeleted { get; set; }

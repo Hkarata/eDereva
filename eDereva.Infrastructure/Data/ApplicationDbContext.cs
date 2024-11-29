@@ -19,6 +19,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<Question> Questions { get; set; }
     public required DbSet<Choice> Choices { get; set; }
     public required DbSet<Answer> Answers { get; set; }
+    public required DbSet<Booking> Bookings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
