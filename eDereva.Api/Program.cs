@@ -87,6 +87,7 @@ builder.Services.AddScoped<IVenueExemptionService, VenueExemptionService>();
 builder.Services.AddScoped<ISessionCreationJob, SessionCreationJob>();
 builder.Services.AddScoped<IPublicHolidayService, PublicHolidayService>();
 builder.Services.AddScoped<IQuestionBankRepository, QuestionBankRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
 builder.Services.AddFastEndpoints()
     .AddResponseCaching();
