@@ -109,4 +109,9 @@ public static class UserExtensions
             Email = user.Email!
         };
     }
+
+    public static string FullName(this User user)
+    {
+        return $"{user.FirstName} {user.MiddleName} {user.LastName}";
+    }
 }
