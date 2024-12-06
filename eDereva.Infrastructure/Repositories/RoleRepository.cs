@@ -92,7 +92,7 @@ public class RoleRepository(ApplicationDbContext context, ILogger<RoleRepository
         var role = await context.Roles
             .AsNoTracking()
             .Include(r => r.Permission)
-            .FirstOrDefaultAsync(r => r.Name.ToLower() == roleName.ToLower(), cancellationToken);
+            .FirstOrDefaultAsync(r => r.Name.Equals(roleName, StringComparison.CurrentCultureIgnoreCase), cancellationToken);
 
         if (role == null) logger.LogWarning("Role with ID {RoleId} not found or has no permissions.", role!.Id);
 
