@@ -87,16 +87,38 @@ public class RoleRepository(ApplicationDbContext context, ILogger<RoleRepository
 
     public async Task<Role?> GetByNameAsync(string roleName, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Fetching role with ID {RoleName} and its permissions.", roleName);
+        logger.LogInformation("Fetching role with name {RoleName} and its permissions.", roleName);
 
         var role = await context.Roles
             .AsNoTracking()
+            .Where(r => r.Name.ToLower() == roleName.ToLower())
             .Include(r => r.Permission)
-            .FirstOrDefaultAsync(r => r.Name.Equals(roleName, StringComparison.CurrentCultureIgnoreCase), cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (role == null) logger.LogWarning("Role with ID {RoleId} not found or has no permissions.", role!.Id);
+        if (role == null)
+        {
+            logger.LogWarning("Role with name {RoleName} not found.", roleName);
+        }
 
         return role;
+    }
+
+    public async Task AddBasicUserRole(string userNin, CancellationToken cancellationToken)
+    {
+        var role = await GetByNameAsync("Basic User", cancellationToken);
+        
+        const string sqlQuery = $"""
+                                             INSERT INTO [RoleUser] ([RolesId], [UsersNin])
+                                             VALUES (@roleId, @userNin);
+                                 """;
+
+        // Execute the SQL query
+        await context.Database.ExecuteSqlRawAsync(
+            sqlQuery, 
+            new Microsoft.Data.SqlClient.SqlParameter("@roleId", role!.Id),
+            new Microsoft.Data.SqlClient.SqlParameter("@userNin", userNin)
+        );
+        
     }
 
     public async Task<PermissionFlag> GetBasicRolePermissionFlag()

@@ -12,5 +12,6 @@ public interface IRoleRepository
     Task<bool> DeleteAsync(Guid roleId, CancellationToken cancellationToken);
     Task<List<Guid>> GetRoleIdsAsync(CancellationToken cancellationToken);
     Task<Role?> GetByNameAsync(string roleName, CancellationToken cancellationToken);
+    Task AddBasicUserRole(string userNin, CancellationToken cancellationToken);
     Task<PermissionFlag> GetBasicRolePermissionFlag();
 }

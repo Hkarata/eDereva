@@ -152,7 +152,7 @@ app.MapScalarApiReference(options =>
     options.WithApiKeyAuthentication(keyOptions => { keyOptions.Token = "Token"; });
     options.AddServer(new ScalarServer
     (
-        "http://4.221.77.82",
+        "http://3.90.35.169/",
         "Dev server"
     ));
     options.AddServer(new ScalarServer
