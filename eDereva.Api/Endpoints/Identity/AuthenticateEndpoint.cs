@@ -40,8 +40,11 @@ public class AuthenticateEndpoint(
             permissionFlag = await roleRepository.GetBasicRolePermissionFlag();
         else
             permissionFlag = await userRepository.GetAggregatePermissionFlag(req.PhoneNumber, ct);
+        
+        var userdata = await userRepository.GetUserDataAsync(req.PhoneNumber, ct);
 
-        var token = tokenService.GenerateToken(authenticationResults.Message!, permissionFlag);
+        var token = tokenService.GenerateToken(userdata.nin, userdata.givenName, 
+            userdata.surname, userdata.email, userdata.phoneNumber, permissionFlag);
 
 
         return TypedResults.Ok(token);

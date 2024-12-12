@@ -142,4 +142,15 @@ public class UserRepository(
 
         return combinedFlags;
     }
+
+    public async Task<(string nin, string givenName, string surname, string phoneNumber, string email)> 
+        GetUserDataAsync(string phoneNumber, CancellationToken cancellationToken)
+    {
+        var userdata = await context.Users
+            .Where(u => u.PhoneNumber == phoneNumber)
+            .FirstOrDefaultAsync(cancellationToken);
+        
+
+        return (userdata!.Nin, userdata.FirstName, userdata.LastName, userdata.PhoneNumber, userdata.Email)!;
+    }
 }

@@ -21,17 +21,21 @@ public class TokenService(IConfiguration configuration) : ITokenService
                                          throw new ArgumentNullException(nameof(configuration),
                                              "SecretKey cannot be null");
 
-    public string GenerateToken(string username, PermissionFlag permissions)
+    public string GenerateToken(string nin, string givenName, string surname, string phoneNumber, string email, PermissionFlag permissions)
     {
-        if (string.IsNullOrEmpty(username))
-            throw new ArgumentException("Username cannot be null or empty", nameof(username));
+        if (string.IsNullOrEmpty(nin))
+            throw new ArgumentException("Username cannot be null or empty", nameof(nin));
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Name, username)
+            new(ClaimTypes.Sid, nin),
+            new(ClaimTypes.GivenName, givenName),
+            new(ClaimTypes.Surname, surname),
+            new(ClaimTypes.Email, phoneNumber),
+            new(ClaimTypes.MobilePhone, email)
         };
 
         claims.AddRange(Enum.GetValues<PermissionFlag>()
@@ -42,7 +46,7 @@ public class TokenService(IConfiguration configuration) : ITokenService
             _issuer,
             _audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(30), // Using UTC time
+            expires: DateTime.UtcNow.AddMinutes(5), // Using UTC time
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

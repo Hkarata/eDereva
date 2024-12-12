@@ -26,7 +26,7 @@ public class JwtRefreshMiddleware(RequestDelegate next, ITokenService tokenServi
                     if (username != null && permissionsClaim != null &&
                         Enum.TryParse(permissionsClaim, out PermissionFlag permissions))
                     {
-                        var newToken = tokenService.GenerateToken(username, permissions);
+                        var newToken = tokenService.GenerateToken(username, string.Empty, string.Empty, string.Empty, string.Empty, permissions);
                         context.Response.Headers.Append("X-New-Token",
                             newToken); // Include new token in response header
                     }

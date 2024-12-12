@@ -8,13 +8,7 @@ namespace eDereva.Core.Services;
 /// </summary>
 public interface ITokenService
 {
-    /// <summary>
-    ///     Generates a JWT token for a user with the specified permissions.
-    /// </summary>
-    /// <param name="username">The username of the user.</param>
-    /// <param name="permissions">The permission flags assigned to the user.</param>
-    /// <returns>A JWT token as a string.</returns>
-    string GenerateToken(string username, PermissionFlag permissions);
+    string GenerateToken(string nin, string givenName, string surname, string phoneNumber, string email, PermissionFlag permissions);
 
     /// <summary>
     ///     Checks if the given token is close to expiring.
