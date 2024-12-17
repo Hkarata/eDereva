@@ -6,11 +6,11 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace eDereva.Api.Endpoints.Locale;
 
-public class GetDistrictsEndpoint (HybridCache hybridCache, ILocaleRepository localeRepository) : Endpoint<Guid, Results<Ok<List<DistrictDto>>, BadRequest<string>>>
+public class GetDistrictsEndpoint (HybridCache hybridCache, ILocaleRepository localeRepository) : EndpointWithoutRequest<Results<Ok<List<DistrictDto>>, BadRequest<string>>>
 {
     public override void Configure()
     {
-        Get("/Districts/{regionId}");
+        Get("/region/{regionId}/districts");
         Version(1);
         AllowAnonymous();
         Description(options =>
@@ -20,7 +20,7 @@ public class GetDistrictsEndpoint (HybridCache hybridCache, ILocaleRepository lo
         });
     }
 
-    public override async Task<Results<Ok<List<DistrictDto>>, BadRequest<string>>> ExecuteAsync(Guid req, CancellationToken ct)
+    public override async Task<Results<Ok<List<DistrictDto>>, BadRequest<string>>> ExecuteAsync(CancellationToken ct)
     {
         var regionId = Route<Guid>("regionId");
         
