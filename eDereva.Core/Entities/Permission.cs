@@ -95,4 +95,18 @@ public class Permission
     [NotMapped] public bool CanDeleteBookings => Flags.HasFlag(PermissionFlag.DeleteBookings);
 
     #endregion
+
+    #region Session Permissions
+
+    [NotMapped] public bool CanManageSessions => Flags.HasFlag(PermissionFlag.ManageSessions);
+    
+    [NotMapped] public bool CanViewSessions => Flags.HasFlag(PermissionFlag.ViewSessions);
+    
+    [NotMapped] public bool CanCreateSessions => Flags.HasFlag(PermissionFlag.CreateSessions);
+    
+    [NotMapped] public bool CanEditSessions => Flags.HasFlag(PermissionFlag.EditSessions);
+    
+    [NotMapped] public bool CanDeleteSessions => Flags.HasFlag(PermissionFlag.DeleteSessions);
+
+    #endregion
 }

@@ -34,7 +34,7 @@ public class RoleRepository(ApplicationDbContext context, ILogger<RoleRepository
     {
         logger.LogInformation("Attempting to delete role with ID {RoleId}.", roleId);
 
-        var role = await context.Roles.FindAsync(roleId);
+        var role = await context.Roles.FindAsync([roleId], cancellationToken: cancellationToken);
         if (role == null)
         {
             logger.LogWarning("Role with ID {RoleId} not found. Delete operation skipped.", roleId);

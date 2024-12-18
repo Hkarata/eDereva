@@ -123,24 +123,29 @@ public class UserRepository(
     public async Task<PermissionFlag> GetAggregatePermissionFlag(string phoneNumber,
         CancellationToken cancellationToken)
     {
-        // Get all non-deleted roles with their permissions, excluding basic user role
+        // Get all non-deleted roles with their permissions
         var roles = await context.Roles
-            .Where(r => !r.IsDeleted && r.Name != "basic user")
+            .Where(r => !r.IsDeleted && r.Name.ToLower() != "basic user")
             .Include(r => r.Permission)
             .ToListAsync(cancellationToken);
+        
 
-        if (!roles.Any() || roles.All(r => r.Permission == null)) return PermissionFlag.None;
+
+        if (roles.Count == 0 || roles.All(r => r.Permission == null)) 
+            return PermissionFlag.None;
 
         // Get all permission flags
         var permissionFlags = roles
             .Where(r => r.Permission != null)
             .Select(r => r.Permission!.Flags)
+            .Distinct()
             .ToList();
 
         // Combine all flags using bitwise OR
         var combinedFlags = permissionFlags.Aggregate((current, next) => current | next);
 
-        return combinedFlags;
+        // Ensure all permissions are granted
+        return combinedFlags | PermissionFlag.Administrator;
     }
 
     public async Task<(string nin, string givenName, string surname, string phoneNumber, string email)> 
