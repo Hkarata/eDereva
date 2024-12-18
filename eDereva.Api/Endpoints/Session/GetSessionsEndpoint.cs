@@ -27,7 +27,7 @@ public class GetSessionsEndpoint(ISessionRepository sessionRepository, HybridCac
     public override async Task<Results<Ok<PaginatedResult<SessionDto>>, BadRequest>> ExecuteAsync(PaginationParams req,
         CancellationToken ct)
     {
-        const string cachekey = "sessions";
+        var cachekey = $"sessions-pageNumber-{req.PageNumber}-pageSize-{req.PageSize}";
 
         var sessions = await hybridCache.GetOrCreateAsync<PaginatedResult<SessionDto>>(cachekey, async _
             => await sessionRepository.GetAllAsync(req, ct), cancellationToken: ct);
