@@ -53,6 +53,39 @@ public class TokenService(IConfiguration configuration) : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+    
+    public string RefreshToken(string nin, string givenName, string surname, string phoneNumber, string email,
+        PermissionFlag permissions, int refreshTimes)
+    {
+        if (string.IsNullOrEmpty(nin))
+            throw new ArgumentException("Username cannot be null or empty", nameof(nin));
+
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Sid, nin),
+            new(ClaimTypes.GivenName, givenName),
+            new(ClaimTypes.Surname, surname),
+            new(ClaimTypes.Email, phoneNumber),
+            new(ClaimTypes.MobilePhone, email),
+            new("RefreshTimes", refreshTimes.ToString())
+        };
+
+        claims.AddRange(Enum.GetValues<PermissionFlag>()
+            .Where(permission => permissions.HasFlag(permission) && permission != PermissionFlag.None)
+            .Select(permission => new Claim("Permission", permission.ToString())));
+
+        var token = new JwtSecurityToken(
+            _issuer,
+            _audience,
+            claims,
+            expires: DateTime.UtcNow.AddMinutes(20), // Using UTC time
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
 
     public bool IsTokenCloseToExpiring(JwtSecurityToken? token)
     {

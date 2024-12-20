@@ -44,8 +44,19 @@ public class JwtRefreshMiddleware(RequestDelegate next, ITokenService tokenServi
         // If token is close to expiring, refresh it
         if (tokenService.IsTokenCloseToExpiring(jsonWebToken))
         {
-            var newToken = RefreshToken(jsonWebToken);
-            context.Response.Headers.Append("X-New-Token", newToken);
+            try
+            {
+                var newToken = RefreshToken(jsonWebToken);
+                context.Response.Headers.Append("X-New-Token", newToken);
+            }
+            catch
+            {
+                context.Response.StatusCode = 401; // Unauthorized
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync("{\"error\": \"Max token refresh limit exceeded.\"}");
+                return;
+            }
+
         }
 
         // Proceed to the next middleware in the pipeline
@@ -88,6 +99,6 @@ public class JwtRefreshMiddleware(RequestDelegate next, ITokenService tokenServi
             permissionsClaims?.Aggregate(PermissionFlag.None, (current, flag) => current | flag) ?? PermissionFlag.None;
 
         // Generate new token
-        return tokenService.GenerateToken(nin, givenName!, surname!, phoneNumber!, email!, combinedPermissions);
+        return tokenService.RefreshToken(nin, givenName!, surname!, phoneNumber!, email!, combinedPermissions, refreshTimesInt + 1);
     }
 }
