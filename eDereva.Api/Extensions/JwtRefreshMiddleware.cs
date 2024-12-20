@@ -19,7 +19,7 @@ public class JwtRefreshMiddleware(RequestDelegate next, ITokenService tokenServi
 
         if (string.IsNullOrEmpty(token))
         {
-            context.Response.StatusCode = 401; // Unauthorized
+            await next(context);
             return;
         }
 
