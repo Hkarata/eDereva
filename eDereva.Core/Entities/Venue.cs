@@ -38,8 +38,8 @@ public static class VenueExtensions
             Address = venue.Address,
             ImageUrls = venue.ImageUrls,
             Capacity = venue.Capacity,
-            District = venue.District!.Name,
-            Region = venue.District.Region!.Name!
+            District = venue.District?.Name ?? string.Empty,
+            Region = venue.District?.Region?.Name ?? string.Empty
         };
     }
 }

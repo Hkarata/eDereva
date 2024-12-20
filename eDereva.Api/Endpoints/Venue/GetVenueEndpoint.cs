@@ -13,7 +13,8 @@ public class GetVenueEndpoint(IVenueRepository venueRepository)
     {
         Get("/venues/{venueId}");
         Version(1);
-        Policies("RequireViewVenues");
+        // Policies("RequireViewVenues");
+        AllowAnonymous();
         Description(options =>
         {
             options.WithTags("Venue")

@@ -95,9 +95,15 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
 
     public async Task<Venue?> GetVenueById(Guid venueId, CancellationToken cancellationToken)
     {
-        return await context.Venues
+        var venue = await context.Venues
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(v => v.District)
+            .ThenInclude(d => d.Region)
             .Where(v => !v.IsDeleted && v.Id == venueId)
             .FirstOrDefaultAsync(cancellationToken);
+        
+        return venue;
     }
 
     public async Task<List<Guid>> GetAllVenuesIds(CancellationToken cancellationToken)
