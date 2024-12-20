@@ -21,7 +21,8 @@ public class TokenService(IConfiguration configuration) : ITokenService
                                          throw new ArgumentNullException(nameof(configuration),
                                              "SecretKey cannot be null");
 
-    public string GenerateToken(string nin, string givenName, string surname, string phoneNumber, string email, PermissionFlag permissions)
+    public string GenerateToken(string nin, string givenName, string surname, string phoneNumber, string email,
+        PermissionFlag permissions)
     {
         if (string.IsNullOrEmpty(nin))
             throw new ArgumentException("Username cannot be null or empty", nameof(nin));

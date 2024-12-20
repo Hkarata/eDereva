@@ -102,7 +102,7 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
             .ThenInclude(d => d.Region)
             .Where(v => !v.IsDeleted && v.Id == venueId)
             .FirstOrDefaultAsync(cancellationToken);
-        
+
         return venue;
     }
 

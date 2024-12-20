@@ -15,7 +15,7 @@ public class LocaleRepository(ApplicationDbContext context) : ILocaleRepository
                 Id = r.Id,
                 Name = r.Name
             })
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken);
 
         return regions.Count == 0 ? null : regions;
     }
@@ -30,8 +30,8 @@ public class LocaleRepository(ApplicationDbContext context) : ILocaleRepository
                 Id = d.Id,
                 Name = d.Name
             })
-            .ToListAsync(cancellationToken: cancellationToken);
-        
+            .ToListAsync(cancellationToken);
+
         return districts;
     }
 }

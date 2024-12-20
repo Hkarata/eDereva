@@ -128,10 +128,9 @@ public class UserRepository(
             .Where(r => !r.IsDeleted && r.Name.ToLower() != "basic user")
             .Include(r => r.Permission)
             .ToListAsync(cancellationToken);
-        
 
 
-        if (roles.Count == 0 || roles.All(r => r.Permission == null)) 
+        if (roles.Count == 0 || roles.All(r => r.Permission == null))
             return PermissionFlag.None;
 
         // Get all permission flags
@@ -148,13 +147,13 @@ public class UserRepository(
         return combinedFlags | PermissionFlag.Administrator;
     }
 
-    public async Task<(string nin, string givenName, string surname, string phoneNumber, string email)> 
+    public async Task<(string nin, string givenName, string surname, string phoneNumber, string email)>
         GetUserDataAsync(string phoneNumber, CancellationToken cancellationToken)
     {
         var userdata = await context.Users
             .Where(u => u.PhoneNumber == phoneNumber)
             .FirstOrDefaultAsync(cancellationToken);
-        
+
 
         return (userdata!.Nin, userdata.FirstName, userdata.LastName, userdata.PhoneNumber, userdata.Email)!;
     }

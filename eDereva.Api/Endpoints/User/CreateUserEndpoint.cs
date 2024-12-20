@@ -1,5 +1,4 @@
 using eDereva.Core.Contracts.Requests;
-using eDereva.Core.Entities;
 using eDereva.Core.Repositories;
 using eDereva.Core.Services;
 using FastEndpoints;
@@ -46,7 +45,7 @@ public class CreateUserEndpoint(
         };
 
         await userRepository.AddAsync(user, ct);
-        
+
         await roleRepository.AddBasicUserRole(user.Nin, ct);
     }
 }

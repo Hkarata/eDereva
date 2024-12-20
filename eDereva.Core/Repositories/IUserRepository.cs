@@ -22,5 +22,6 @@ public interface IUserRepository
 
     Task<PermissionFlag> GetAggregatePermissionFlag(string phoneNumber, CancellationToken cancellationToken);
 
-    Task<(string nin, string givenName, string surname, string phoneNumber, string email)> GetUserDataAsync(string nin, CancellationToken cancellationToken);
+    Task<(string nin, string givenName, string surname, string phoneNumber, string email)> GetUserDataAsync(string nin,
+        CancellationToken cancellationToken);
 }

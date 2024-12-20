@@ -64,7 +64,8 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
                 s.StartTime,
                 s.EndTime,
                 ContingencyType = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
-                ContingencyExplanation = s.Contingency != null ? s.Contingency.ContingencyExplanation : "No explanation",
+                ContingencyExplanation =
+                    s.Contingency != null ? s.Contingency.ContingencyExplanation : "No explanation",
                 VenueName = s.Venue != null ? s.Venue.Name : "Unknown",
                 DistrictName = s.Venue != null && s.Venue.District != null ? s.Venue.District.Name : "Unknown",
                 RegionName = s.Venue != null && s.Venue.District != null && s.Venue.District.Region != null
@@ -97,9 +98,10 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         return new PaginatedResult<SessionDto>(result, totalCount, paginationParams);
     }
 
-    public async Task<PaginatedResult<SessionDto>> GetByVenueIdAsync(Guid venueId, PaginationParams paginationParams, CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<SessionDto>> GetByVenueIdAsync(Guid venueId, PaginationParams paginationParams,
+        CancellationToken cancellationToken = default)
     {
-       logger.LogInformation("Fetching all sessions with pagination: Page {PageNumber}, Size {PageSize}",
+        logger.LogInformation("Fetching all sessions with pagination: Page {PageNumber}, Size {PageSize}",
             paginationParams.PageNumber, paginationParams.PageSize);
 
         var query = context.Sessions
@@ -114,7 +116,8 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
                 s.StartTime,
                 s.EndTime,
                 ContingencyType = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
-                ContingencyExplanation = s.Contingency != null ? s.Contingency.ContingencyExplanation : "No explanation",
+                ContingencyExplanation =
+                    s.Contingency != null ? s.Contingency.ContingencyExplanation : "No explanation",
                 VenueName = s.Venue != null ? s.Venue.Name : "Unknown",
                 DistrictName = s.Venue != null && s.Venue.District != null ? s.Venue.District.Name : "Unknown",
                 RegionName = s.Venue != null && s.Venue.District != null && s.Venue.District.Region != null
@@ -153,7 +156,8 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         throw new NotImplementedException();
     }
 
-    public Task<PaginatedResult<SessionDto>> GetSessionsByDateRangeAsync(DateTime startDate, DateTime endDate, PaginationParams paginationParams,
+    public Task<PaginatedResult<SessionDto>> GetSessionsByDateRangeAsync(DateTime startDate, DateTime endDate,
+        PaginationParams paginationParams,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
@@ -189,7 +193,8 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         return true;
     }
 
-    public async Task<bool> UpdateStatusAsync(Guid id, SessionStatus newStatus, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateStatusAsync(Guid id, SessionStatus newStatus,
+        CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Updating status for session with ID: {SessionId} to {NewStatus}.", id, newStatus);
 
@@ -204,11 +209,13 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         session.ModifiedAt = DateTime.UtcNow;
         await context.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Status for session with ID: {SessionId} updated to {NewStatus} successfully.", id, newStatus);
+        logger.LogInformation("Status for session with ID: {SessionId} updated to {NewStatus} successfully.", id,
+            newStatus);
         return true;
     }
 
-    public Task<bool> CheckSessionsByVenueAndDate(Guid pairVenueId, DateTime pairDate, CancellationToken cancellationToken)
+    public Task<bool> CheckSessionsByVenueAndDate(Guid pairVenueId, DateTime pairDate,
+        CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

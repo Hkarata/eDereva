@@ -2,6 +2,7 @@
 using eDereva.Core.Enums;
 using eDereva.Core.Repositories;
 using eDereva.Infrastructure.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -34,7 +35,7 @@ public class RoleRepository(ApplicationDbContext context, ILogger<RoleRepository
     {
         logger.LogInformation("Attempting to delete role with ID {RoleId}.", roleId);
 
-        var role = await context.Roles.FindAsync([roleId], cancellationToken: cancellationToken);
+        var role = await context.Roles.FindAsync([roleId], cancellationToken);
         if (role == null)
         {
             logger.LogWarning("Role with ID {RoleId} not found. Delete operation skipped.", roleId);
@@ -95,10 +96,7 @@ public class RoleRepository(ApplicationDbContext context, ILogger<RoleRepository
             .Include(r => r.Permission)
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (role == null)
-        {
-            logger.LogWarning("Role with name {RoleName} not found.", roleName);
-        }
+        if (role == null) logger.LogWarning("Role with name {RoleName} not found.", roleName);
 
         return role;
     }
@@ -106,19 +104,18 @@ public class RoleRepository(ApplicationDbContext context, ILogger<RoleRepository
     public async Task AddBasicUserRole(string userNin, CancellationToken cancellationToken)
     {
         var role = await GetByNameAsync("Basic User", cancellationToken);
-        
-        const string sqlQuery = $"""
-                                             INSERT INTO [RoleUser] ([RolesId], [UsersNin])
-                                             VALUES (@roleId, @userNin);
-                                 """;
+
+        const string sqlQuery = """
+                                            INSERT INTO [RoleUser] ([RolesId], [UsersNin])
+                                            VALUES (@roleId, @userNin);
+                                """;
 
         // Execute the SQL query
         await context.Database.ExecuteSqlRawAsync(
-            sqlQuery, 
-            new Microsoft.Data.SqlClient.SqlParameter("@roleId", role!.Id),
-            new Microsoft.Data.SqlClient.SqlParameter("@userNin", userNin)
+            sqlQuery,
+            new SqlParameter("@roleId", role!.Id),
+            new SqlParameter("@userNin", userNin)
         );
-        
     }
 
     public async Task<PermissionFlag> GetBasicRolePermissionFlag()

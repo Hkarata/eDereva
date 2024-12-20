@@ -8,7 +8,8 @@ namespace eDereva.Core.Services;
 /// </summary>
 public interface ITokenService
 {
-    string GenerateToken(string nin, string givenName, string surname, string phoneNumber, string email, PermissionFlag permissions);
+    string GenerateToken(string nin, string givenName, string surname, string phoneNumber, string email,
+        PermissionFlag permissions);
 
     /// <summary>
     ///     Checks if the given token is close to expiring.

@@ -15,13 +15,11 @@ public class JwtRefreshMiddleware(RequestDelegate next, ITokenService tokenServi
         var token = string.Empty;
 
         if (authorizationHeader.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-        {
             token = authorizationHeader.ToString()["Bearer ".Length..];
-        }
 
         if (string.IsNullOrEmpty(token))
         {
-            context.Response.StatusCode = 401;  // Unauthorized
+            context.Response.StatusCode = 401; // Unauthorized
             return;
         }
 
@@ -37,7 +35,7 @@ public class JwtRefreshMiddleware(RequestDelegate next, ITokenService tokenServi
         }
         catch (Exception)
         {
-            context.Response.StatusCode = 400;  // Bad request: Invalid token format
+            context.Response.StatusCode = 400; // Bad request: Invalid token format
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsync("{\"error\": \"Token is malformed.\"}");
             return;
@@ -59,11 +57,10 @@ public class JwtRefreshMiddleware(RequestDelegate next, ITokenService tokenServi
     {
         // Check if the token is expired
         if (token != null && token.ValidTo >= DateTime.UtcNow) return true;
-        context.Response.StatusCode = 401;  // Unauthorized
+        context.Response.StatusCode = 401; // Unauthorized
         context.Response.ContentType = "application/json";
         context.Response.WriteAsync("{\"error\": \"Token is expired.\"}");
         return false;
-
     }
 
     // Refreshes the token and returns the new token as a string
@@ -80,16 +77,15 @@ public class JwtRefreshMiddleware(RequestDelegate next, ITokenService tokenServi
         var refreshTimesInt = int.TryParse(refreshTimes, out var times) ? times : 0;
 
         if (refreshTimesInt > MaxTokenRefreshAllowed)
-        {
             throw new InvalidOperationException("Max token refresh limit exceeded.");
-        }
 
         var permissionsClaims = jsonWebToken?.Claims
             .Where(c => c.Type == "Permission")
             .Select(c => Enum.TryParse<PermissionFlag>(c.Value, out var flag) ? flag : PermissionFlag.None)
             .ToArray();
 
-        var combinedPermissions = permissionsClaims?.Aggregate(PermissionFlag.None, (current, flag) => current | flag) ?? PermissionFlag.None;
+        var combinedPermissions =
+            permissionsClaims?.Aggregate(PermissionFlag.None, (current, flag) => current | flag) ?? PermissionFlag.None;
 
         // Generate new token
         return tokenService.GenerateToken(nin, givenName!, surname!, phoneNumber!, email!, combinedPermissions);
