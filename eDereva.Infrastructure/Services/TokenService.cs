@@ -48,7 +48,7 @@ public class TokenService(IConfiguration configuration) : ITokenService
             _issuer,
             _audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(20), // Using UTC time
+            expires: DateTime.UtcNow.AddMinutes(6), // Using UTC time
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
