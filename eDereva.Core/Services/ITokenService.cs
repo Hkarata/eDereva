@@ -15,5 +15,5 @@ public interface ITokenService
     /// </summary>
     /// <param name="token">The JWT token to check.</param>
     /// <returns>True if the token is close to expiring; otherwise, false.</returns>
-    bool IsTokenCloseToExpiring(JwtSecurityToken token);
+    bool IsTokenCloseToExpiring(JwtSecurityToken? token);
 }

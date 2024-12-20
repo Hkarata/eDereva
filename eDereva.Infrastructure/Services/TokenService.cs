@@ -35,7 +35,8 @@ public class TokenService(IConfiguration configuration) : ITokenService
             new(ClaimTypes.GivenName, givenName),
             new(ClaimTypes.Surname, surname),
             new(ClaimTypes.Email, phoneNumber),
-            new(ClaimTypes.MobilePhone, email)
+            new(ClaimTypes.MobilePhone, email),
+            new("RefreshTimes", 0.ToString())
         };
 
         claims.AddRange(Enum.GetValues<PermissionFlag>()
@@ -46,17 +47,17 @@ public class TokenService(IConfiguration configuration) : ITokenService
             _issuer,
             _audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(5), // Using UTC time
+            expires: DateTime.UtcNow.AddMinutes(20), // Using UTC time
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public bool IsTokenCloseToExpiring(JwtSecurityToken token)
+    public bool IsTokenCloseToExpiring(JwtSecurityToken? token)
     {
         ArgumentNullException.ThrowIfNull(token);
 
-        var timeToExpire = token.ValidTo - DateTime.UtcNow;
+        var timeToExpire = (token.ValidTo - DateTime.UtcNow).Duration();
         return timeToExpire < TimeSpan.FromMinutes(5);
     }
 }
