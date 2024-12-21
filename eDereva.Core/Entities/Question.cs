@@ -1,19 +1,14 @@
-using eDereva.Core.Interfaces;
-
 namespace eDereva.Core.Entities;
 
-public class Question : IAudit, ISoftDelete
+public class Question
 {
     public Guid Id { get; set; }
-    public string Scenario { get; set; } = string.Empty;
-    public List<string>? ImageUrls { get; set; }
-    public string QuestionText { get; set; } = string.Empty;
+    public string Text { get; set; } = string.Empty;
+    public ICollection<Option>? Options { get; set; }
 
-    // Navigation properties
-    public ICollection<Choice>? Choices { get; set; }
-    public Guid QuestionBankId { get; set; }
-    public QuestionBank? QuestionBank { get; set; }
-    public DateTime CreatedAt { get; } = DateTime.UtcNow;
-    public DateTime? ModifiedAt { get; set; }
-    public bool IsDeleted { get; set; }
+    // Foreign Key to Section Template
+    public Guid SectionTemplateId { get; set; }
+
+    // Navigation Properties
+    public SectionTemplate SectionTemplate { get; set; } = default!;
 }
