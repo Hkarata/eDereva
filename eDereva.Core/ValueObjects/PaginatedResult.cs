@@ -17,7 +17,7 @@ public class PaginatedResult<T>
         TotalPages = (int)Math.Ceiling(count / (double)pagination.PageSize);
     }
 
-    public IEnumerable<T> Items { get; set; } // Added setter for deserialization
+    public IEnumerable<T> Items { get; set; } = null!; // Added setter for deserialization
     public int PageNumber { get; set; } // Added setter for deserialization
     public int PageSize { get; set; } // Added setter for deserialization
     public int TotalPages { get; set; } // Added setter for deserialization

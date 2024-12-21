@@ -99,7 +99,7 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
             .AsNoTracking()
             .AsSplitQuery()
             .Include(v => v.District)
-            .ThenInclude(d => d.Region)
+            .ThenInclude(d => d!.Region)
             .Where(v => !v.IsDeleted && v.Id == venueId)
             .FirstOrDefaultAsync(cancellationToken);
 
