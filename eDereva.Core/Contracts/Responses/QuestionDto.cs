@@ -6,5 +6,6 @@ public class QuestionDto
     public string Scenario { get; set; } = string.Empty;
     public List<string>? ImageUrls { get; set; }
     public string QuestionText { get; set; } = string.Empty;
-    public List<ChoiceDto>? Choices { get; set; }
+    public List<OptionDto>? Choices { get; set; }
+    public Guid SectionTemplateId { get; set; }
 }

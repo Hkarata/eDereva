@@ -97,6 +97,8 @@ builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<ILocaleRepository, LocaleRepository>();
 builder.Services.AddScoped<ITestRepository, TestRepository>();
 builder.Services.AddScoped<IOptionRepository, OptionRepository>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<ISectionTemplateRepository, SectionTemplateRepository>();
 
 builder.Services.AddFastEndpoints()
     .AddResponseCaching();
