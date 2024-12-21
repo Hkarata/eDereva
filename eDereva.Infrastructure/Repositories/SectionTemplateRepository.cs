@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eDereva.Infrastructure.Repositories;
 
-public class SectionTemplateRepository (ApplicationDbContext context) : ISectionTemplateRepository
+public class SectionTemplateRepository(ApplicationDbContext context) : ISectionTemplateRepository
 {
     public async Task<SectionTemplate?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -36,7 +36,7 @@ public class SectionTemplateRepository (ApplicationDbContext context) : ISection
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        context.SectionTemplates.Remove(new SectionTemplate {Id = id});
+        context.SectionTemplates.Remove(new SectionTemplate { Id = id });
         await context.SaveChangesAsync(cancellationToken);
     }
 }

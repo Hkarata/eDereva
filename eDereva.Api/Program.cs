@@ -72,8 +72,8 @@ builder.Services.AddHybridCache(options =>
 #pragma warning restore EXTEXP0018 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
 
-builder.Services.AddCors(options => 
-    options.AddPolicy("CorsPolicy", corsPolicyBuilder => 
+builder.Services.AddCors(options =>
+    options.AddPolicy("CorsPolicy", corsPolicyBuilder =>
         corsPolicyBuilder.AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader()

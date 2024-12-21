@@ -53,7 +53,7 @@ public class TokenService(IConfiguration configuration) : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    
+
     public string RefreshToken(string nin, string givenName, string surname, string phoneNumber, string email,
         PermissionFlag permissions, int refreshTimes)
     {

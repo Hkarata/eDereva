@@ -15,17 +15,17 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<Region> Regions { get; set; }
     public required DbSet<District> Districts { get; set; }
     public required DbSet<VenueExemption> VenueExemptions { get; set; }
-    
+
     public required DbSet<Question> Questions { get; set; }
-    
+
     public required DbSet<Option> Options { get; set; }
-    
+
     public required DbSet<Test> Tests { get; set; }
     public required DbSet<SectionTemplate> SectionTemplates { get; set; }
     public required DbSet<TestSection> TestSections { get; set; }
-    
+
     public required DbSet<LicenseClass> LicenseClasses { get; set; }
-    
+
     public required DbSet<Answer> Answers { get; set; }
     public required DbSet<Booking> Bookings { get; set; }
 

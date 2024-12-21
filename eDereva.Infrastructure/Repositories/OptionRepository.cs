@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eDereva.Infrastructure.Repositories;
 
-public class OptionRepository (ApplicationDbContext context) : IOptionRepository
+public class OptionRepository(ApplicationDbContext context) : IOptionRepository
 {
     public async Task<Option?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -37,7 +37,7 @@ public class OptionRepository (ApplicationDbContext context) : IOptionRepository
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        context.Options.Remove(new Option {Id = id});
+        context.Options.Remove(new Option { Id = id });
         await context.SaveChangesAsync(cancellationToken);
     }
 }

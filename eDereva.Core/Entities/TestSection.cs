@@ -3,11 +3,11 @@ namespace eDereva.Core.Entities;
 public class TestSection
 {
     public Guid Id { get; set; }
-    
+
     public Guid TestId { get; set; }
-    
+
     public Guid SectionTemplateId { get; set; }
-    
+
     public int ContributionCount { get; set; }
 
     // Navigation Properties

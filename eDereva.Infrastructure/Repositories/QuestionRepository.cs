@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eDereva.Infrastructure.Repositories;
 
-public class QuestionRepository (ApplicationDbContext context) : IQuestionRepository
+public class QuestionRepository(ApplicationDbContext context) : IQuestionRepository
 {
     public async Task<Question?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -15,13 +15,14 @@ public class QuestionRepository (ApplicationDbContext context) : IQuestionReposi
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Question>> GetBySectionTemplateIdAsync(Guid sectionTemplateId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Question>> GetBySectionTemplateIdAsync(Guid sectionTemplateId,
+        CancellationToken cancellationToken)
     {
         var questions = await context.Questions
             .Where(q => q.SectionTemplateId == sectionTemplateId)
             .Include(q => q.Options)
             .ToListAsync(cancellationToken);
-        
+
         return questions;
     }
 
@@ -39,7 +40,7 @@ public class QuestionRepository (ApplicationDbContext context) : IQuestionReposi
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        context.Questions.Remove(new Question {Id = id});
+        context.Questions.Remove(new Question { Id = id });
         await context.SaveChangesAsync(cancellationToken);
     }
 }
