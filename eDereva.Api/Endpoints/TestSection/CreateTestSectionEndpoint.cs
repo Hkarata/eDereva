@@ -5,9 +5,10 @@ using FastEndpoints;
 
 namespace eDereva.Api.Endpoints.TestSection;
 
-public class CreateTestSectionEndpoint (ITestSectionRepository testSectionRepository,
+public class CreateTestSectionEndpoint(
+    ITestSectionRepository testSectionRepository,
     ISectionTemplateRepository sectionTemplateRepository
-    ) : Endpoint<TestSectionDto>
+) : Endpoint<TestSectionDto>
 {
     public override void Configure()
     {
@@ -39,9 +40,9 @@ public class CreateTestSectionEndpoint (ITestSectionRepository testSectionReposi
             Name = req.Name,
             Description = req.Description
         };
-        
+
         await sectionTemplateRepository.AddAsync(sectionTemplate, ct);
-        
+
         await testSectionRepository.AddAsync(testSection, ct);
 
         await SendOkAsync(ct);

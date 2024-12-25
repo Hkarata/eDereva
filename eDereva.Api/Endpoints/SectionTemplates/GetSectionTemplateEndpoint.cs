@@ -6,8 +6,9 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace eDereva.Api.Endpoints.SectionTemplates;
 
-public class GetSectionTemplateEndpoint (ISectionTemplateRepository sectionTemplateRepository,
-    HybridCache hybridCache) 
+public class GetSectionTemplateEndpoint(
+    ISectionTemplateRepository sectionTemplateRepository,
+    HybridCache hybridCache)
     : EndpointWithoutRequest<Results<Ok<SectionTemplateDto>, BadRequest<string>>>
 {
     public override void Configure()
@@ -26,13 +27,13 @@ public class GetSectionTemplateEndpoint (ISectionTemplateRepository sectionTempl
     public override async Task<Results<Ok<SectionTemplateDto>, BadRequest<string>>> ExecuteAsync(CancellationToken ct)
     {
         var sectionTemplateId = Route<Guid>("sectionTemplateId");
-        
+
         var cacheKey = $"sectionTemplate-{sectionTemplateId}";
 
-        var sectionTemplate = await hybridCache.GetOrCreateAsync(cacheKey, async token 
+        var sectionTemplate = await hybridCache.GetOrCreateAsync(cacheKey, async token
             => await sectionTemplateRepository.GetByIdAsync(sectionTemplateId, ct), cancellationToken: ct);
-        
-        if (sectionTemplate is null) 
+
+        if (sectionTemplate is null)
             return TypedResults.BadRequest("Section Template not found");
 
         var response = new SectionTemplateDto
@@ -57,7 +58,7 @@ public class GetSectionTemplateEndpoint (ISectionTemplateRepository sectionTempl
                     SectionTemplateId = q.SectionTemplateId
                 }).ToList()
         };
-        
+
         return TypedResults.Ok(response);
     }
 }

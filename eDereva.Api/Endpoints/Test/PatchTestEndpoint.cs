@@ -29,13 +29,13 @@ public class PatchTestEndpoint(ITestRepository testRepository) : Endpoint<TestDt
             await SendNotFoundAsync(ct);
             return;
         }
-        
+
         test.Name = req.Name;
         test.Description = req.Description;
         test.TestVersion = req.TestVersion;
         test.Duration = req.Duration;
         test.PassScore = req.PassScore;
-        
+
         await testRepository.UpdateAsync(test, ct);
 
         await SendOkAsync(ct);
