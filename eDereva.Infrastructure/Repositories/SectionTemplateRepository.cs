@@ -11,7 +11,8 @@ public class SectionTemplateRepository(ApplicationDbContext context) : ISectionT
     {
         return await context.SectionTemplates
             .Where(st => st.Id == id)
-            .Include(st => st.Questions)
+            .Include(st => st.Questions)!
+            .ThenInclude(q => q.Options)
             .SingleOrDefaultAsync(cancellationToken);
     }
 

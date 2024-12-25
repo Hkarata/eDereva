@@ -7,7 +7,7 @@ public class DeleteQuestionEndpoint(IQuestionRepository questionRepository) : En
 {
     public override void Configure()
     {
-        Patch("/questions/{questionId}");
+        Delete("/questions/{questionId}");
         Version(1);
         AllowAnonymous();
         Description(options =>
