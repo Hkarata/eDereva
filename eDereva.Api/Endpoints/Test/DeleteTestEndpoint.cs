@@ -1,9 +1,9 @@
-using eDereva.Infrastructure.Repositories;
+using eDereva.Core.Repositories;
 using FastEndpoints;
 
 namespace eDereva.Api.Endpoints.Test;
 
-public class DeleteTestEndpoint(TestRepository testRepository) : EndpointWithoutRequest
+public class DeleteTestEndpoint(ITestRepository testRepository) : EndpointWithoutRequest
 {
     public override void Configure()
     {
