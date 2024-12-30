@@ -69,11 +69,12 @@ public class BookingRepository(ApplicationDbContext context) : IBookingRepositor
             .AsNoTracking()
             .Include(b => b.Session)
             .Where(b => b.UserNin == nin && !b.IsDeleted)
-            .OrderByDescending(b => b.Session!.StartTime) // Assuming you want the most recent session
+            .OrderByDescending(b => b.Session!.Date) // Assuming you want the most recent session
             .FirstOrDefaultAsync(cancellationToken);
 
         // If there is no booking, the user can book
-        if (existingBooking == null) return true;
+        if (existingBooking == null) 
+            return true;
 
         // Check if the session date of the existing booking has passed
         var sessionDate = existingBooking.Session!.Date;
