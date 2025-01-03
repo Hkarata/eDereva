@@ -13,7 +13,7 @@ public class GetVenuesEndpoint(IVenueRepository venueRepository)
 {
     public override void Configure()
     {
-        Post("/venues");
+        Post("/venue");
         Version(1);
         Policies("RequireViewVenues");
         Description(options =>
