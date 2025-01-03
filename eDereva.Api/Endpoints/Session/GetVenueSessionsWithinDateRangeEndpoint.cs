@@ -8,7 +8,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 namespace eDereva.Api.Endpoints.Session;
 
 public class GetVenueSessionsWithinDateRangeEndpoint(ISessionRepository sessionRepository, HybridCache hybridCache)
-    : Endpoint<PaginationParams, Results<Ok<PaginatedResult<SessionDto>>, BadRequest>>
+    : Endpoint<PaginationParams, Results<Ok<PaginatedResult<SessionDto>>, NoContent>>
 {
     public override void Configure()
     {
@@ -22,7 +22,7 @@ public class GetVenueSessionsWithinDateRangeEndpoint(ISessionRepository sessionR
         });
     }
 
-    public override async Task<Results<Ok<PaginatedResult<SessionDto>>, BadRequest>> ExecuteAsync(PaginationParams req,
+    public override async Task<Results<Ok<PaginatedResult<SessionDto>>, NoContent>> ExecuteAsync(PaginationParams req,
         CancellationToken ct)
     {
         var venueId = Route<Guid>("venueId");
@@ -34,7 +34,7 @@ public class GetVenueSessionsWithinDateRangeEndpoint(ISessionRepository sessionR
                 => await sessionRepository.GetVenueSessionsByDateRangeAsync(venueId, startDate, endDate, req, entry),
             cancellationToken: ct);
 
-        if (sessions.TotalCount == 0) return TypedResults.BadRequest();
+        if (sessions.TotalCount == 0) return TypedResults.NoContent();
 
         return TypedResults.Ok(sessions);
     }
