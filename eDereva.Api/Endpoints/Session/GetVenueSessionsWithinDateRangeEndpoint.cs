@@ -18,7 +18,7 @@ public class GetVenueSessionsWithinDateRangeEndpoint(ISessionRepository sessionR
         Description(options =>
         {
             options.WithTags("Session")
-                .WithSummary("Get sessions within date range");
+                .WithSummary("Get Venue sessions within date range");
         });
     }
 
