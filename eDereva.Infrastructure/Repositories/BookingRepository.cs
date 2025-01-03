@@ -73,14 +73,14 @@ public class BookingRepository(ApplicationDbContext context) : IBookingRepositor
             .FirstOrDefaultAsync(cancellationToken);
 
         // If there is no booking, the user can book
-        if (existingBooking == null) 
+        if (existingBooking == null)
             return true;
 
         // Check if the session date of the existing booking has passed
         var sessionDate = existingBooking.Session!.Date;
 
         var result = sessionDate < DateTime.UtcNow;
-        
+
         return result;
     }
 }
