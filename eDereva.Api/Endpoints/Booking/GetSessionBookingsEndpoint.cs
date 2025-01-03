@@ -1,7 +1,11 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Repositories;
 using eDereva.Core.ValueObjects;
 using FastEndpoints;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Caching.Hybrid;
 
@@ -12,7 +16,7 @@ public class GetSessionBookingsEndpoint(IBookingRepository bookingRepository, Hy
 {
     public override void Configure()
     {
-        Get("/sessions/{sessionId}/bookings");
+        Post("/sessions/{sessionId}/bookings");
         Version(1);
         Policies("RequireViewBookings");
         Description(options =>

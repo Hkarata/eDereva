@@ -12,7 +12,7 @@ public class GetSessionsWithinDateRangeEndpoint(ISessionRepository sessionReposi
 {
     public override void Configure()
     {
-        Get("/sessions/within-date-range/{startDate}/{endDate}");
+        Post("/sessions/within-date-range/{startDate}/{endDate}");
         Version(1);
         Policies("RequireViewSessions");
         Description(options =>

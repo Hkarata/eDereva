@@ -11,19 +11,18 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace eDereva.Api.Endpoints.Session;
 
-public class GetVenueSessionsEndpoint(ISessionRepository sessionRepository, HybridCache hybridCache)
+public class GetVenueSessionsWithinDateRangeEndpoint(ISessionRepository sessionRepository, HybridCache hybridCache)
     : Endpoint<PaginationParams, Results<Ok<PaginatedResult<SessionDto>>, BadRequest>>
 {
     public override void Configure()
     {
-        Post("/venue/{venueId}/sessions");
+        Post("/venue/{venueId}/sessions/within-date-range/{startDate}/{endDate}");
         Version(1);
         Policies("RequireViewSessions");
         Description(options =>
         {
             options.WithTags("Session")
-                .WithSummary("Get venue sessions")
-                .WithDescription("Fetches a paginated list of sessions for a specific venue.");
+                .WithSummary("Get sessions within date range");
         });
     }
 
@@ -31,11 +30,13 @@ public class GetVenueSessionsEndpoint(ISessionRepository sessionRepository, Hybr
         CancellationToken ct)
     {
         var venueId = Route<Guid>("venueId");
-
-        var cacheKey = $"venue-{venueId}-sessions";
+        var startDate = Route<DateTime>("startDate");
+        var endDate = Route<DateTime>("endDate");
+        var cacheKey = $"sessions-within-date-range-{startDate}-{endDate}";
 
         var sessions = await hybridCache.GetOrCreateAsync<PaginatedResult<SessionDto>>(cacheKey, async entry
-            => await sessionRepository.GetByVenueIdAsync(venueId, req, entry), cancellationToken: ct);
+                => await sessionRepository.GetVenueSessionsByDateRangeAsync(venueId,startDate, endDate, req, entry),
+            cancellationToken: ct);
 
         if (sessions.TotalCount == 0) return TypedResults.BadRequest();
 

@@ -79,6 +79,8 @@ public class BookingRepository(ApplicationDbContext context) : IBookingRepositor
         // Check if the session date of the existing booking has passed
         var sessionDate = existingBooking.Session!.Date;
 
-        return sessionDate < DateTime.UtcNow;
+        var result = sessionDate < DateTime.UtcNow;
+        
+        return result;
     }
 }

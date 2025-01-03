@@ -5,6 +5,7 @@ using eDereva.Core.Repositories;
 using eDereva.Core.ValueObjects;
 using eDereva.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 
 namespace eDereva.Infrastructure.Repositories;
@@ -54,7 +55,7 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
 
         var query = context.Sessions
             .AsNoTracking()
-            .Where(s => !s.IsDeleted)
+            .Where(s => !s.IsDeleted && s.Date >= DateTime.UtcNow)
             .OrderBy(s => s.Date)
             .ThenBy(s => s.StartTime)
             .Select(s => new
@@ -156,11 +157,69 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         throw new NotImplementedException();
     }
 
-    public Task<PaginatedResult<SessionDto>> GetSessionsByDateRangeAsync(DateTime startDate, DateTime endDate,
-        PaginationParams paginationParams,
-        CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<SessionDto>> GetVenueSessionsByDateRangeAsync(Guid venueId, DateTime startDate, DateTime endDate,
+        PaginationParams paginationParams, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var sessions = await context.Sessions
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Where(s => s.VenueId == venueId && startDate <= s.Date && s.Date <= endDate)
+            .Include(s => s.Contingency)
+            .Include(s => s.Venue)
+            .ThenInclude(s => s!.District)
+            .ThenInclude(s => s!.Region)
+            .OrderBy(s => s.Date)
+            .ThenBy(s => s.StartTime)
+            .Select(s => new SessionDto
+            {
+                Id = s.Id,
+                Date = s.Date,
+                StartTime = s.StartTime,
+                EndTime = s.EndTime,
+                Venue = s.Venue!.Name,
+                District = s.Venue.District != null ? s.Venue.District.Name : "Unknown",
+                Region = s.Venue.District!.Region != null ? s.Venue.District.Region.Name : "Unknown",
+                Contingency = s.Contingency!.ContingencyType,
+                ContingencyExplanation = s.Contingency.ContingencyExplanation,
+            })
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize) // Skip records of previous pages
+            .Take(paginationParams.PageSize)
+            .ToListAsync(cancellationToken);
+        
+        return new PaginatedResult<SessionDto>(sessions, sessions.Count, paginationParams);
+    }
+
+    public async Task<PaginatedResult<SessionDto>> GetSessionsByDateRangeAsync(DateTime startDate, DateTime endDate, PaginationParams paginationParams,
+        CancellationToken cancellationToken)
+    {
+        var sessions = await context.Sessions
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Where(s => startDate <= s.Date && s.Date <= endDate)
+            .Include(s => s.Contingency)
+            .Include(s => s.Venue)
+            .ThenInclude(v => v!.District)
+            .ThenInclude(d => d!.Region)
+            .OrderBy(s => s.Date)
+            .ThenBy(s => s.StartTime)
+            .Select(s => new SessionDto
+            {
+                Id = s.Id,
+                Date = s.Date,
+                StartTime = s.StartTime,
+                EndTime = s.EndTime,
+                Venue = s.Venue != null ? s.Venue.Name : "Unknown",
+                District = s.Venue != null && s.Venue.District != null ? s.Venue.District.Name : "Unknown",
+                Region = s.Venue != null ? s.Venue.District != null ? s.Venue.District.Region != null ? s.Venue.District.Region.Name : "Unknown" : "Unknown" : "Unknown",
+                Contingency = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
+                ContingencyExplanation = s.Contingency != null ? s.Contingency.ContingencyExplanation ?? "No explanation provided" : "No explanation provided",
+            })
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize) // Skip records for previous pages
+            .Take(paginationParams.PageSize) // Take the requested number of records
+            .ToListAsync(cancellationToken);
+
+        
+        return new PaginatedResult<SessionDto>(sessions, sessions.Count, paginationParams);
     }
 
     public async Task<Session> CreateAsync(Session session, CancellationToken cancellationToken = default)
@@ -178,7 +237,7 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
     {
         logger.LogInformation("Soft deleting session with ID: {SessionId}.", id);
 
-        var session = await context.Sessions.FindAsync(new object[] { id }, cancellationToken);
+        var session = await context.Sessions.FindAsync([id], cancellationToken);
         if (session == null)
         {
             logger.LogWarning("Session with ID: {SessionId} not found for deletion.", id);
@@ -198,7 +257,7 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
     {
         logger.LogInformation("Updating status for session with ID: {SessionId} to {NewStatus}.", id, newStatus);
 
-        var session = await context.Sessions.FindAsync(new object[] { id }, cancellationToken);
+        var session = await context.Sessions.FindAsync([id], cancellationToken);
         if (session == null)
         {
             logger.LogWarning("Session with ID: {SessionId} not found for status update.", id);

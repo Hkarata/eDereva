@@ -1,7 +1,10 @@
+using System.Threading;
+using System.Threading.Tasks;
 using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Repositories;
 using eDereva.Core.ValueObjects;
 using FastEndpoints;
+using Microsoft.AspNetCore.Http;
 
 namespace eDereva.Api.Endpoints.Venue;
 
@@ -10,7 +13,7 @@ public class GetVenuesEndpoint(IVenueRepository venueRepository)
 {
     public override void Configure()
     {
-        Get("/venues");
+        Post("/venues");
         Version(1);
         Policies("RequireViewVenues");
         Description(options =>

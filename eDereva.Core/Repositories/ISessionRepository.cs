@@ -18,6 +18,10 @@ public interface ISessionRepository
     Task<PaginatedResult<Session>> GetByContingencyIdAsync(Guid contingencyId, PaginationParams paginationParams,
         CancellationToken cancellationToken = default);
 
+    Task<PaginatedResult<SessionDto>> GetVenueSessionsByDateRangeAsync(
+        Guid venueId, DateTime startDate, DateTime endDate, PaginationParams paginationParams,
+        CancellationToken cancellationToken);
+
     Task<PaginatedResult<SessionDto>> GetSessionsByDateRangeAsync(DateTime startDate, DateTime endDate,
         PaginationParams paginationParams, CancellationToken cancellationToken = default);
 

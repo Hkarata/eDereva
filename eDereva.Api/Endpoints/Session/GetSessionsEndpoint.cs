@@ -1,7 +1,10 @@
+using System.Threading;
+using System.Threading.Tasks;
 using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Repositories;
 using eDereva.Core.ValueObjects;
 using FastEndpoints;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Caching.Hybrid;
 
@@ -12,7 +15,7 @@ public class GetSessionsEndpoint(ISessionRepository sessionRepository, HybridCac
 {
     public override void Configure()
     {
-        Get("/sessions");
+        Post("/sessions");
         Version(1);
         Policies("RequireViewSessions");
         Description(options =>
