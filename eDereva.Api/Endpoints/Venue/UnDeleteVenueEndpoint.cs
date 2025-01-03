@@ -1,9 +1,5 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using eDereva.Core.Repositories;
 using FastEndpoints;
-using Microsoft.AspNetCore.Http;
 
 namespace eDereva.Api.Endpoints.Venue;
 

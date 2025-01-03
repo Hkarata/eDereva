@@ -5,7 +5,6 @@ using eDereva.Core.Repositories;
 using eDereva.Core.ValueObjects;
 using eDereva.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 
 namespace eDereva.Infrastructure.Repositories;
@@ -157,7 +156,8 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         throw new NotImplementedException();
     }
 
-    public async Task<PaginatedResult<SessionDto>> GetVenueSessionsByDateRangeAsync(Guid venueId, DateTime startDate, DateTime endDate,
+    public async Task<PaginatedResult<SessionDto>> GetVenueSessionsByDateRangeAsync(Guid venueId, DateTime startDate,
+        DateTime endDate,
         PaginationParams paginationParams, CancellationToken cancellationToken)
     {
         var sessions = await context.Sessions
@@ -180,16 +180,17 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
                 District = s.Venue.District != null ? s.Venue.District.Name : "Unknown",
                 Region = s.Venue.District!.Region != null ? s.Venue.District.Region.Name : "Unknown",
                 Contingency = s.Contingency!.ContingencyType,
-                ContingencyExplanation = s.Contingency.ContingencyExplanation,
+                ContingencyExplanation = s.Contingency.ContingencyExplanation
             })
             .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize) // Skip records of previous pages
             .Take(paginationParams.PageSize)
             .ToListAsync(cancellationToken);
-        
+
         return new PaginatedResult<SessionDto>(sessions, sessions.Count, paginationParams);
     }
 
-    public async Task<PaginatedResult<SessionDto>> GetSessionsByDateRangeAsync(DateTime startDate, DateTime endDate, PaginationParams paginationParams,
+    public async Task<PaginatedResult<SessionDto>> GetSessionsByDateRangeAsync(DateTime startDate, DateTime endDate,
+        PaginationParams paginationParams,
         CancellationToken cancellationToken)
     {
         var sessions = await context.Sessions
@@ -210,15 +211,21 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
                 EndTime = s.EndTime,
                 Venue = s.Venue != null ? s.Venue.Name : "Unknown",
                 District = s.Venue != null && s.Venue.District != null ? s.Venue.District.Name : "Unknown",
-                Region = s.Venue != null ? s.Venue.District != null ? s.Venue.District.Region != null ? s.Venue.District.Region.Name : "Unknown" : "Unknown" : "Unknown",
+                Region = s.Venue != null
+                    ? s.Venue.District != null
+                        ? s.Venue.District.Region != null ? s.Venue.District.Region.Name : "Unknown"
+                        : "Unknown"
+                    : "Unknown",
                 Contingency = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
-                ContingencyExplanation = s.Contingency != null ? s.Contingency.ContingencyExplanation ?? "No explanation provided" : "No explanation provided",
+                ContingencyExplanation = s.Contingency != null
+                    ? s.Contingency.ContingencyExplanation ?? "No explanation provided"
+                    : "No explanation provided"
             })
             .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize) // Skip records for previous pages
             .Take(paginationParams.PageSize) // Take the requested number of records
             .ToListAsync(cancellationToken);
 
-        
+
         return new PaginatedResult<SessionDto>(sessions, sessions.Count, paginationParams);
     }
 

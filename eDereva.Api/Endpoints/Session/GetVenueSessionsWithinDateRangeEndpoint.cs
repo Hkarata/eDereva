@@ -1,11 +1,7 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Repositories;
 using eDereva.Core.ValueObjects;
 using FastEndpoints;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Caching.Hybrid;
 
@@ -35,7 +31,7 @@ public class GetVenueSessionsWithinDateRangeEndpoint(ISessionRepository sessionR
         var cacheKey = $"sessions-within-date-range-{startDate}-{endDate}";
 
         var sessions = await hybridCache.GetOrCreateAsync<PaginatedResult<SessionDto>>(cacheKey, async entry
-                => await sessionRepository.GetVenueSessionsByDateRangeAsync(venueId,startDate, endDate, req, entry),
+                => await sessionRepository.GetVenueSessionsByDateRangeAsync(venueId, startDate, endDate, req, entry),
             cancellationToken: ct);
 
         if (sessions.TotalCount == 0) return TypedResults.BadRequest();
