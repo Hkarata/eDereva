@@ -46,6 +46,44 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
         // Return the paginated result
         return new PaginatedResult<VenueDto>(venues, totalCount, paginationParams);
     }
+    
+    public async Task<PaginatedResult<VenueDto>> GetVenuesByRegionPaginated(Guid regionId, PaginationParams paginationParams,
+        CancellationToken cancellationToken)
+    {
+        // Ensure pagination parameters are valid, defaulting if necessary
+        paginationParams.PageNumber = paginationParams.PageNumber < 1 ? 1 : paginationParams.PageNumber;
+        paginationParams.PageSize = paginationParams.PageSize < 1 ? 10 : paginationParams.PageSize;
+
+        // Querying only active (non-deleted) venues
+        var query = context.Venues
+            .AsNoTracking()
+            .Include(v => v.District)
+            .ThenInclude(d => d!.Region)
+            .Where(v => !v.IsDeleted && v.District!.RegionId == regionId);
+
+        // Calculate the total number of venues (for pagination purposes)
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        // Retrieve the paginated list of venues, ordered by name
+        var venues = await query
+            .OrderBy(v => v.Name) // Ensure it's ordered consistently
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize) // Apply paging logic
+            .Take(paginationParams.PageSize) // Take only the required number of records
+            .Select(v => new VenueDto
+            {
+                Id = v.Id,
+                Name = v.Name,
+                Address = v.Address,
+                ImageUrls = v.ImageUrls,
+                Capacity = v.Capacity,
+                District = v.District!.Name,
+                Region = v.District!.Region!.Name
+            })
+            .ToListAsync(cancellationToken); // Fetch the data asynchronously
+
+        // Return the paginated result
+        return new PaginatedResult<VenueDto>(venues, totalCount, paginationParams);
+    }
 
 
     public async Task<bool> AddVenue(Venue venue, CancellationToken cancellationToken)
