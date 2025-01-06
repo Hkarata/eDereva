@@ -179,8 +179,10 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
                 Venue = s.Venue!.Name,
                 District = s.Venue.District != null ? s.Venue.District.Name : "Unknown",
                 Region = s.Venue.District!.Region != null ? s.Venue.District.Region.Name : "Unknown",
-                Contingency = s.Contingency!.ContingencyType,
-                ContingencyExplanation = s.Contingency.ContingencyExplanation
+                Contingency = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
+                ContingencyExplanation = s.Contingency != null
+                    ? s.Contingency.ContingencyExplanation ?? "No explanation provided"
+                    : "No explanation provided"
             })
             .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize) // Skip records of previous pages
             .Take(paginationParams.PageSize)

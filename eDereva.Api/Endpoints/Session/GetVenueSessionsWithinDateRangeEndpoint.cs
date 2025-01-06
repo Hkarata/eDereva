@@ -28,7 +28,7 @@ public class GetVenueSessionsWithinDateRangeEndpoint(ISessionRepository sessionR
         var venueId = Route<Guid>("venueId");
         var startDate = Route<DateTime>("startDate");
         var endDate = Route<DateTime>("endDate");
-        var cacheKey = $"sessions-within-date-range-{startDate}-{endDate}";
+        var cacheKey = $"{venueId}-{req.PageNumber}-{req.PageSize}-{startDate}-{endDate}";
 
         var sessions = await hybridCache.GetOrCreateAsync<PaginatedResult<SessionDto>>(cacheKey, async entry
                 => await sessionRepository.GetVenueSessionsByDateRangeAsync(venueId, startDate, endDate, req, entry),
