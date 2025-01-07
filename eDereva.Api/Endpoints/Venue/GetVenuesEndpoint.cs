@@ -26,7 +26,7 @@ public class GetVenuesEndpoint(IVenueRepository venueRepository)
     {
         var venues = await venueRepository.GetVenuesPaginated(req, ct);
 
-        if (venues.TotalCount == 0) 
+        if (venues.TotalCount == 0)
             await SendNoContentAsync(ct);
 
         await SendOkAsync(venues, ct);

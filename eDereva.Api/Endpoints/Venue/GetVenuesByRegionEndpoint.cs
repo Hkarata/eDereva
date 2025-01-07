@@ -26,13 +26,13 @@ public class GetVenuesByRegionEndpoint(IVenueRepository venueRepository, HybridC
     public override async Task HandleAsync(PaginationParams req, CancellationToken ct)
     {
         var regionId = Route<Guid>("regionId");
-        
+
         var cacheKey = $"venues-{regionId}-{req.PageNumber}-{req.PageSize}";
-        
-        var venues = await hybridCache.GetOrCreateAsync(cacheKey, async (entry)
+
+        var venues = await hybridCache.GetOrCreateAsync(cacheKey, async _
             => await venueRepository.GetVenuesByRegionPaginated(regionId, req, ct), cancellationToken: ct);
 
-        if (venues.TotalCount == 0) 
+        if (venues.TotalCount == 0)
             await SendNoContentAsync(ct);
 
         await SendOkAsync(venues, ct);

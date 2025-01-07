@@ -7,14 +7,13 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace eDereva.Api.Endpoints.Venue;
 
 public class GetVenueEndpoint(IVenueRepository venueRepository)
-    : EndpointWithoutRequest<Results<Ok<VenueDto>, BadRequest>>
+    : EndpointWithoutRequest<Results<Ok<VenueDto>, NoContent>>
 {
     public override void Configure()
     {
         Get("/venues/{venueId}");
         Version(1);
-        // Policies("RequireViewVenues");
-        AllowAnonymous();
+        Policies("RequireViewVenues");
         Description(options =>
         {
             options.WithTags("Venue")
@@ -23,13 +22,14 @@ public class GetVenueEndpoint(IVenueRepository venueRepository)
         });
     }
 
-    public override async Task<Results<Ok<VenueDto>, BadRequest>> ExecuteAsync(CancellationToken ct)
+    public override async Task<Results<Ok<VenueDto>, NoContent>> ExecuteAsync(CancellationToken ct)
     {
         var venueId = Route<Guid>("venueId");
 
         var venue = await venueRepository.GetVenueById(venueId, ct);
 
-        if (venue is null) return TypedResults.BadRequest();
+        if (venue is null)
+            return TypedResults.NoContent();
 
         return TypedResults.Ok(venue.MapToVenueDto());
     }

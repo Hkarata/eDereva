@@ -8,6 +8,7 @@ public interface IVenueRepository
 {
     Task<PaginatedResult<VenueDto>> GetVenuesPaginated(PaginationParams paginationParams,
         CancellationToken cancellationToken);
+
     Task<PaginatedResult<VenueDto>> GetVenuesByRegionPaginated(Guid regionId, PaginationParams paginationParams,
         CancellationToken cancellationToken);
 

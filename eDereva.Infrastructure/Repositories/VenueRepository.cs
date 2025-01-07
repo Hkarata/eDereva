@@ -46,8 +46,9 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
         // Return the paginated result
         return new PaginatedResult<VenueDto>(venues, totalCount, paginationParams);
     }
-    
-    public async Task<PaginatedResult<VenueDto>> GetVenuesByRegionPaginated(Guid regionId, PaginationParams paginationParams,
+
+    public async Task<PaginatedResult<VenueDto>> GetVenuesByRegionPaginated(Guid regionId,
+        PaginationParams paginationParams,
         CancellationToken cancellationToken)
     {
         // Ensure pagination parameters are valid, defaulting if necessary

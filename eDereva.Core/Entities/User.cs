@@ -70,6 +70,8 @@ public class User
     public ICollection<Role>? Roles { get; set; }
 
     public ICollection<Booking>? Bookings { get; set; }
+    
+    public ICollection<LicenseClass>? LicensesClasses { get; set; }
 }
 
 /// <summary>

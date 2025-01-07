@@ -23,8 +23,8 @@ public class StartSessionSchedulerEndpoint : EndpointWithoutRequest
         RecurringJob.AddOrUpdate<SessionCreationJob>(
             "Session Scheduler",
             x => x.RunJobAsync(
-                DateTime.Now.Date.AddDays(-((int)DateTime.Now.DayOfWeek) + 1), // Current week's Monday
-                DateTime.Now.Date.AddDays(-((int)DateTime.Now.DayOfWeek) + 6), // Current week's Saturday
+                DateTime.Now.Date.AddDays(-(int)DateTime.Now.DayOfWeek + 1), // Current week's Monday
+                DateTime.Now.Date.AddDays(-(int)DateTime.Now.DayOfWeek + 6), // Current week's Saturday
                 ct),
             "0 3 * * 0"
         );

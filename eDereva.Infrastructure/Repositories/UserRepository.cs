@@ -157,4 +157,22 @@ public class UserRepository(
 
         return (userdata!.Nin, userdata.FirstName, userdata.LastName, userdata.PhoneNumber, userdata.Email)!;
     }
+
+    public async Task<DashboardDto> GetDashboardDataAsync(string nin, CancellationToken cancellationToken)
+    {
+        var data = await context.Users
+            .Where(u => u.Nin == nin)
+            .Include(u => u.LicensesClasses)
+            .Select(u => new DashboardDto
+            {
+                Nin = u.Nin,
+                FullName = $"{u.FirstName} {u.LastName}",
+                Sex = u.Sex,
+                Age = DateTime.Now.Subtract(u.DateOfBirth).Days,
+                LicenseClasses = u.LicensesClasses!.Select(c => c.Class).ToList()
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+        
+        return data!;
+    }
 }
