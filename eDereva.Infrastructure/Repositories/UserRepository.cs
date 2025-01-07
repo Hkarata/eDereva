@@ -172,7 +172,7 @@ public class UserRepository(
                 LicenseClasses = u.LicensesClasses!.Select(c => c.Class).ToList()
             })
             .FirstOrDefaultAsync(cancellationToken);
-        
+
         return data!;
     }
 }

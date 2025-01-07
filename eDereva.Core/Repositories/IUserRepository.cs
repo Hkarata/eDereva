@@ -24,6 +24,6 @@ public interface IUserRepository
 
     Task<(string nin, string givenName, string surname, string phoneNumber, string email)> GetUserDataAsync(string nin,
         CancellationToken cancellationToken);
-    
+
     Task<DashboardDto> GetDashboardDataAsync(string nin, CancellationToken cancellationToken);
 }
