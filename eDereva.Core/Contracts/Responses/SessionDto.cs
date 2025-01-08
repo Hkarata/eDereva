@@ -7,6 +7,7 @@ public class SessionDto
     public Guid Id { get; set; }
     public DateTime Date { get; set; }
     public SessionStatus Status { get; set; } = SessionStatus.Active;
+    public int SessionCapacity { get; set; }
     public TimeOnly StartTime { get; set; }
     public TimeOnly EndTime { get; set; }
     public ContingencyType Contingency { get; set; } = ContingencyType.None; // Default is no contingency

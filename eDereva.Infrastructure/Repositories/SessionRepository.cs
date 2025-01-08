@@ -98,57 +98,58 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         return new PaginatedResult<SessionDto>(result, totalCount, paginationParams);
     }
 
-    public async Task<PaginatedResult<SessionDto>> GetByVenueIdAsync(Guid venueId, PaginationParams paginationParams,
-        CancellationToken cancellationToken = default)
-    {
-        logger.LogInformation("Fetching all sessions with pagination: Page {PageNumber}, Size {PageSize}",
-            paginationParams.PageNumber, paginationParams.PageSize);
+    public async Task<PaginatedResult<SessionDto>> GetByVenueIdAsync(
+    Guid venueId, 
+    PaginationParams paginationParams,
+    CancellationToken cancellationToken = default)
+{
+    logger.LogInformation("Fetching sessions for venue {VenueId} with pagination: Page {PageNumber}, Size {PageSize}",
+        venueId, paginationParams.PageNumber, paginationParams.PageSize);
 
-        var query = context.Sessions
-            .AsNoTracking()
-            .Where(s => !s.IsDeleted && s.VenueId == venueId)
-            .OrderBy(s => s.Date)
-            .ThenBy(s => s.StartTime)
-            .Select(s => new
-            {
-                s.Id,
-                s.Date,
-                s.StartTime,
-                s.EndTime,
-                ContingencyType = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
-                ContingencyExplanation =
-                    s.Contingency != null ? s.Contingency.ContingencyExplanation : "No explanation",
-                VenueName = s.Venue != null ? s.Venue.Name : "Unknown",
-                DistrictName = s.Venue != null && s.Venue.District != null ? s.Venue.District.Name : "Unknown",
-                RegionName = s.Venue != null && s.Venue.District != null && s.Venue.District.Region != null
-                    ? s.Venue.District.Region.Name
-                    : "Unknown"
-            });
+    // Calculate total count separately for better performance
+    var totalCount = await context.Sessions
+        .Where(s => s.VenueId == venueId)
+        .CountAsync(cancellationToken);
 
-        // Perform the operations sequentially on the DbContext to avoid concurrency issues
-        var totalCount = await query.CountAsync(cancellationToken);
-        var items = await query
-            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
-            .Take(paginationParams.PageSize)
-            .ToListAsync(cancellationToken);
-
-        var result = items.Select(s => new SessionDto
+    var utcNow = DateTime.UtcNow;
+    
+    var sessions = await context.Sessions
+        .AsNoTracking()
+        .Where(s => s.VenueId == venueId)
+        .Select(s => new SessionDto
         {
             Id = s.Id,
             Date = s.Date,
             StartTime = s.StartTime,
             EndTime = s.EndTime,
-            Contingency = s.ContingencyType,
-            ContingencyExplanation = s.ContingencyExplanation,
-            Venue = s.VenueName,
-            District = s.DistrictName,
-            Region = s.RegionName
-        }).ToList();
+            Venue = s.Venue!.Name,
+            Status = s.Contingency != null
+                ? SessionStatus.Canceled
+                : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                    s.StartTime.Hour, s.StartTime.Minute, s.StartTime.Second) <= utcNow 
+                    && utcNow <= new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                        s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second)
+                    ? SessionStatus.Active
+                    : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                        s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second) < utcNow
+                        ? SessionStatus.Completed
+                        : SessionStatus.Scheduled,
+            SessionCapacity = s.Venue!.Capacity - s.Capacity,
+            District = s.Venue.District != null ? s.Venue.District.Name : "Unknown",
+            Region = s.Venue.District!.Region != null ? s.Venue.District.Region.Name : "Unknown",
+            Contingency = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
+            ContingencyExplanation = s.Contingency != null
+                ? s.Contingency.ContingencyExplanation ?? "No explanation provided"
+                : string.Empty
+        })
+        .OrderBy(s => s.Date)
+        .ThenBy(s => s.StartTime)
+        .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+        .Take(paginationParams.PageSize)
+        .ToListAsync(cancellationToken);
 
-        logger.LogInformation("Fetched {TotalCount} sessions.", totalCount);
-
-        return new PaginatedResult<SessionDto>(result, totalCount, paginationParams);
-    }
+    return new PaginatedResult<SessionDto>(sessions, totalCount, paginationParams);
+}
 
     public Task<PaginatedResult<Session>> GetByContingencyIdAsync(Guid contingencyId, PaginationParams paginationParams,
         CancellationToken cancellationToken = default)
@@ -160,6 +161,8 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         DateTime endDate,
         PaginationParams paginationParams, CancellationToken cancellationToken)
     {
+        var utcNow = DateTime.UtcNow;
+        
         var sessions = await context.Sessions
             .AsNoTracking()
             .AsSplitQuery()
@@ -177,12 +180,24 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
                 StartTime = s.StartTime,
                 EndTime = s.EndTime,
                 Venue = s.Venue!.Name,
+                Status = s.Contingency != null
+                    ? SessionStatus.Canceled
+                    : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                          s.StartTime.Hour, s.StartTime.Minute, s.StartTime.Second) <= utcNow 
+                      && utcNow <= new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                          s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second)
+                        ? SessionStatus.Active
+                        : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                            s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second) < utcNow
+                            ? SessionStatus.Completed
+                            : SessionStatus.Scheduled,
+                SessionCapacity = s.Venue!.Capacity - s.Capacity,
                 District = s.Venue.District != null ? s.Venue.District.Name : "Unknown",
                 Region = s.Venue.District!.Region != null ? s.Venue.District.Region.Name : "Unknown",
                 Contingency = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
                 ContingencyExplanation = s.Contingency != null
                     ? s.Contingency.ContingencyExplanation ?? "No explanation provided"
-                    : "No explanation provided"
+                    : string.Empty
             })
             .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize) // Skip records of previous pages
             .Take(paginationParams.PageSize)
@@ -195,6 +210,8 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         PaginationParams paginationParams,
         CancellationToken cancellationToken)
     {
+        var utcNow = DateTime.UtcNow;
+        
         var sessions = await context.Sessions
             .AsNoTracking()
             .AsSplitQuery()
@@ -211,17 +228,25 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
                 Date = s.Date,
                 StartTime = s.StartTime,
                 EndTime = s.EndTime,
-                Venue = s.Venue != null ? s.Venue.Name : "Unknown",
-                District = s.Venue != null && s.Venue.District != null ? s.Venue.District.Name : "Unknown",
-                Region = s.Venue != null
-                    ? s.Venue.District != null
-                        ? s.Venue.District.Region != null ? s.Venue.District.Region.Name : "Unknown"
-                        : "Unknown"
-                    : "Unknown",
+                Venue = s.Venue!.Name,
+                Status = s.Contingency != null
+                    ? SessionStatus.Canceled
+                    : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                          s.StartTime.Hour, s.StartTime.Minute, s.StartTime.Second) <= utcNow 
+                      && utcNow <= new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                          s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second)
+                        ? SessionStatus.Active
+                        : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                            s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second) < utcNow
+                            ? SessionStatus.Completed
+                            : SessionStatus.Scheduled,
+                SessionCapacity = s.Venue!.Capacity - s.Capacity,
+                District = s.Venue.District != null ? s.Venue.District.Name : "Unknown",
+                Region = s.Venue.District!.Region != null ? s.Venue.District.Region.Name : "Unknown",
                 Contingency = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
                 ContingencyExplanation = s.Contingency != null
                     ? s.Contingency.ContingencyExplanation ?? "No explanation provided"
-                    : "No explanation provided"
+                    : string.Empty
             })
             .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize) // Skip records for previous pages
             .Take(paginationParams.PageSize) // Take the requested number of records

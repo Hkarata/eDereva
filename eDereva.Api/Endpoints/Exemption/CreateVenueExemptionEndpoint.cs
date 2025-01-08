@@ -14,7 +14,7 @@ public class CreateVenueExemptionEndpoint(
     {
         Post("/venue/exemptions");
         Version(1);
-        Policies("RequireEditVenues");
+        Policies("RequireManageVenues");
         Description(options =>
         {
             options.WithTags("Exemption")

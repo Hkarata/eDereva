@@ -25,10 +25,14 @@ public class CreateVenueEndpoint(IVenueRepository venueRepository, ILogger<Creat
     public override async Task<Results<Created, BadRequest>> ExecuteAsync(VenueDto req, CancellationToken ct)
     {
         var venue = req.MapToVenue();
+        
         var result = await venueRepository.AddVenue(venue, ct);
 
-        if (!result) return TypedResults.BadRequest();
+        if (!result) 
+            return TypedResults.BadRequest();
+        
         logger.LogInformation("Created a new venue with id: {venueId}", venue.Id.ToString());
+        
         return TypedResults.Created();
     }
 }

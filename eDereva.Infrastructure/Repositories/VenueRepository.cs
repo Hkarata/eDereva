@@ -95,7 +95,9 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
             return false;
 
         context.Venues.Add(venue);
+        
         await context.SaveChangesAsync(cancellationToken);
+        
         return true;
     }
 
