@@ -1,10 +1,12 @@
-﻿using eDereva.Core.Contracts.Responses;
+﻿using eDereva.Core.Contracts.Requests;
+using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Entities;
 using eDereva.Core.Enums;
 using eDereva.Core.Repositories;
 using eDereva.Core.Services;
 using eDereva.Core.ValueObjects;
 using eDereva.Infrastructure.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
@@ -174,5 +176,25 @@ public class UserRepository(
             .FirstOrDefaultAsync(cancellationToken);
 
         return data!;
+    }
+
+    public async Task AddLicenseClasses(string nin, LicenseClassRequest request, CancellationToken cancellationToken)
+    {
+        // Ensure the LicenseId list is not null or empty
+        if (request.LicenseId == null || request.LicenseId.Count == 0)
+            return;
+
+        const string sqlQuery = """
+                                    INSERT INTO [LicenseClassUser] ([LicensesClassesId], [UsersNin])
+                                    VALUES (@licenseId, @userNin);
+                                """;
+
+        // Loop through the LicenseId list and execute the insert for each license
+        foreach (var licenseId in request.LicenseId)
+            await context.Database.ExecuteSqlRawAsync(
+                sqlQuery,
+                new SqlParameter("@licenseId", licenseId),
+                new SqlParameter("@userNin", nin)
+            );
     }
 }

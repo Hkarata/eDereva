@@ -95,9 +95,9 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
             return false;
 
         context.Venues.Add(venue);
-        
+
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return true;
     }
 
@@ -121,20 +121,20 @@ public class VenueRepository(ApplicationDbContext context) : IVenueRepository
     public async Task DeleteVenue(Guid venueId, CancellationToken cancellationToken)
     {
         var venue = await GetVenueById(venueId, cancellationToken);
-        
+
         if (venue != null)
             venue.IsDeleted = true;
-        
+
         await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task UnDeleteVenue(Guid venueId, CancellationToken cancellationToken)
     {
         var venue = await GetVenueById(venueId, cancellationToken);
-        
+
         if (venue != null)
             venue.IsDeleted = false;
-        
+
         await context.SaveChangesAsync(cancellationToken);
     }
 

@@ -1,4 +1,5 @@
-﻿using eDereva.Core.Contracts.Responses;
+﻿using eDereva.Core.Contracts.Requests;
+using eDereva.Core.Contracts.Responses;
 using eDereva.Core.Entities;
 using eDereva.Core.Enums;
 using eDereva.Core.ValueObjects;
@@ -26,4 +27,6 @@ public interface IUserRepository
         CancellationToken cancellationToken);
 
     Task<DashboardDto> GetDashboardDataAsync(string nin, CancellationToken cancellationToken);
+
+    Task AddLicenseClasses(string nin, LicenseClassRequest request, CancellationToken cancellationToken);
 }

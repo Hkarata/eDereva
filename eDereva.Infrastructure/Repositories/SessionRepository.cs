@@ -99,57 +99,58 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
     }
 
     public async Task<PaginatedResult<SessionDto>> GetByVenueIdAsync(
-    Guid venueId, 
-    PaginationParams paginationParams,
-    CancellationToken cancellationToken = default)
-{
-    logger.LogInformation("Fetching sessions for venue {VenueId} with pagination: Page {PageNumber}, Size {PageSize}",
-        venueId, paginationParams.PageNumber, paginationParams.PageSize);
+        Guid venueId,
+        PaginationParams paginationParams,
+        CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation(
+            "Fetching sessions for venue {VenueId} with pagination: Page {PageNumber}, Size {PageSize}",
+            venueId, paginationParams.PageNumber, paginationParams.PageSize);
 
-    // Calculate total count separately for better performance
-    var totalCount = await context.Sessions
-        .Where(s => s.VenueId == venueId)
-        .CountAsync(cancellationToken);
+        // Calculate total count separately for better performance
+        var totalCount = await context.Sessions
+            .Where(s => s.VenueId == venueId)
+            .CountAsync(cancellationToken);
 
-    var utcNow = DateTime.UtcNow;
-    
-    var sessions = await context.Sessions
-        .AsNoTracking()
-        .Where(s => s.VenueId == venueId)
-        .Select(s => new SessionDto
-        {
-            Id = s.Id,
-            Date = s.Date,
-            StartTime = s.StartTime,
-            EndTime = s.EndTime,
-            Venue = s.Venue!.Name,
-            Status = s.Contingency != null
-                ? SessionStatus.Canceled
-                : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
-                    s.StartTime.Hour, s.StartTime.Minute, s.StartTime.Second) <= utcNow 
-                    && utcNow <= new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
-                        s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second)
-                    ? SessionStatus.Active
-                    : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
-                        s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second) < utcNow
-                        ? SessionStatus.Completed
-                        : SessionStatus.Scheduled,
-            SessionCapacity = s.Venue!.Capacity - s.Capacity,
-            District = s.Venue.District != null ? s.Venue.District.Name : "Unknown",
-            Region = s.Venue.District!.Region != null ? s.Venue.District.Region.Name : "Unknown",
-            Contingency = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
-            ContingencyExplanation = s.Contingency != null
-                ? s.Contingency.ContingencyExplanation ?? "No explanation provided"
-                : string.Empty
-        })
-        .OrderBy(s => s.Date)
-        .ThenBy(s => s.StartTime)
-        .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
-        .Take(paginationParams.PageSize)
-        .ToListAsync(cancellationToken);
+        var utcNow = DateTime.UtcNow;
 
-    return new PaginatedResult<SessionDto>(sessions, totalCount, paginationParams);
-}
+        var sessions = await context.Sessions
+            .AsNoTracking()
+            .Where(s => s.VenueId == venueId)
+            .Select(s => new SessionDto
+            {
+                Id = s.Id,
+                Date = s.Date,
+                StartTime = s.StartTime,
+                EndTime = s.EndTime,
+                Venue = s.Venue!.Name,
+                Status = s.Contingency != null
+                    ? SessionStatus.Canceled
+                    : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day,
+                          s.StartTime.Hour, s.StartTime.Minute, s.StartTime.Second) <= utcNow
+                      && utcNow <= new DateTime(s.Date.Year, s.Date.Month, s.Date.Day,
+                          s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second)
+                        ? SessionStatus.Active
+                        : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day,
+                            s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second) < utcNow
+                            ? SessionStatus.Completed
+                            : SessionStatus.Scheduled,
+                SessionCapacity = s.Venue!.Capacity - s.Capacity,
+                District = s.Venue.District != null ? s.Venue.District.Name : "Unknown",
+                Region = s.Venue.District!.Region != null ? s.Venue.District.Region.Name : "Unknown",
+                Contingency = s.Contingency != null ? s.Contingency.ContingencyType : ContingencyType.None,
+                ContingencyExplanation = s.Contingency != null
+                    ? s.Contingency.ContingencyExplanation ?? "No explanation provided"
+                    : string.Empty
+            })
+            .OrderBy(s => s.Date)
+            .ThenBy(s => s.StartTime)
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+            .Take(paginationParams.PageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<SessionDto>(sessions, totalCount, paginationParams);
+    }
 
     public Task<PaginatedResult<Session>> GetByContingencyIdAsync(Guid contingencyId, PaginationParams paginationParams,
         CancellationToken cancellationToken = default)
@@ -162,7 +163,7 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         PaginationParams paginationParams, CancellationToken cancellationToken)
     {
         var utcNow = DateTime.UtcNow;
-        
+
         var sessions = await context.Sessions
             .AsNoTracking()
             .AsSplitQuery()
@@ -182,12 +183,12 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
                 Venue = s.Venue!.Name,
                 Status = s.Contingency != null
                     ? SessionStatus.Canceled
-                    : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
-                          s.StartTime.Hour, s.StartTime.Minute, s.StartTime.Second) <= utcNow 
-                      && utcNow <= new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                    : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day,
+                          s.StartTime.Hour, s.StartTime.Minute, s.StartTime.Second) <= utcNow
+                      && utcNow <= new DateTime(s.Date.Year, s.Date.Month, s.Date.Day,
                           s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second)
                         ? SessionStatus.Active
-                        : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                        : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day,
                             s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second) < utcNow
                             ? SessionStatus.Completed
                             : SessionStatus.Scheduled,
@@ -211,7 +212,7 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
         CancellationToken cancellationToken)
     {
         var utcNow = DateTime.UtcNow;
-        
+
         var sessions = await context.Sessions
             .AsNoTracking()
             .AsSplitQuery()
@@ -231,12 +232,12 @@ public class SessionRepository(ApplicationDbContext context, ILogger<SessionRepo
                 Venue = s.Venue!.Name,
                 Status = s.Contingency != null
                     ? SessionStatus.Canceled
-                    : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
-                          s.StartTime.Hour, s.StartTime.Minute, s.StartTime.Second) <= utcNow 
-                      && utcNow <= new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                    : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day,
+                          s.StartTime.Hour, s.StartTime.Minute, s.StartTime.Second) <= utcNow
+                      && utcNow <= new DateTime(s.Date.Year, s.Date.Month, s.Date.Day,
                           s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second)
                         ? SessionStatus.Active
-                        : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day, 
+                        : new DateTime(s.Date.Year, s.Date.Month, s.Date.Day,
                             s.EndTime.Hour, s.EndTime.Minute, s.EndTime.Second) < utcNow
                             ? SessionStatus.Completed
                             : SessionStatus.Scheduled,

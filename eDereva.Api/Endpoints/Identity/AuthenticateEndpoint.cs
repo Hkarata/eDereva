@@ -32,7 +32,7 @@ public class AuthenticateEndpoint(
         var authenticationResults = await userRepository
             .AuthenticateAsync(req.PhoneNumber, req.Password, ct);
 
-        if (authenticationResults.IsAuthenticated == false) 
+        if (authenticationResults.IsAuthenticated == false)
             return TypedResults.BadRequest();
 
         PermissionFlag permissionFlag;

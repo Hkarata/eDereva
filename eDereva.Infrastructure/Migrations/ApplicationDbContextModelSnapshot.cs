@@ -22,6 +22,21 @@ namespace eDereva.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("LicenseClassUser", b =>
+                {
+                    b.Property<Guid>("LicensesClassesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UsersNin")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("LicensesClassesId", "UsersNin");
+
+                    b.HasIndex("UsersNin");
+
+                    b.ToTable("LicenseClassUser");
+                });
+
             modelBuilder.Entity("RoleUser", b =>
                 {
                     b.Property<Guid>("RolesId")
@@ -134,12 +149,7 @@ namespace eDereva.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("UserNin")
-                        .HasColumnType("nvarchar(20)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserNin");
 
                     b.ToTable("LicenseClasses");
                 });
@@ -507,6 +517,21 @@ namespace eDereva.Infrastructure.Migrations
                     b.ToTable("VenueExemptions");
                 });
 
+            modelBuilder.Entity("LicenseClassUser", b =>
+                {
+                    b.HasOne("eDereva.Core.Entities.LicenseClass", null)
+                        .WithMany()
+                        .HasForeignKey("LicensesClassesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eDereva.Core.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersNin")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("RoleUser", b =>
                 {
                     b.HasOne("eDereva.Core.Entities.Role", null)
@@ -555,13 +580,6 @@ namespace eDereva.Infrastructure.Migrations
                         .HasForeignKey("RegionId");
 
                     b.Navigation("Region");
-                });
-
-            modelBuilder.Entity("eDereva.Core.Entities.LicenseClass", b =>
-                {
-                    b.HasOne("eDereva.Core.Entities.User", null)
-                        .WithMany("LicensesClasses")
-                        .HasForeignKey("UserNin");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Option", b =>
@@ -696,8 +714,6 @@ namespace eDereva.Infrastructure.Migrations
             modelBuilder.Entity("eDereva.Core.Entities.User", b =>
                 {
                     b.Navigation("Bookings");
-
-                    b.Navigation("LicensesClasses");
                 });
 
             modelBuilder.Entity("eDereva.Core.Entities.Venue", b =>

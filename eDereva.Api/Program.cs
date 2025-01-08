@@ -159,7 +159,7 @@ app.MapOpenApi();
 app.MapScalarApiReference(options =>
 {
     options.Title = "eDereva API";
-    options.Theme = ScalarTheme.Saturn;
+    options.Theme = ScalarTheme.Mars;
     options.WithPreferredScheme("Bearer");
     options.WithApiKeyAuthentication(keyOptions => { keyOptions.Token = "Token"; });
     options.AddServer(new ScalarServer
